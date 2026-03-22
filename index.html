@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calcul autonomie trott</title>
+  <title>TEST LISTES VOLTS AH</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,43 +12,36 @@
       margin: 0;
       padding: 20px;
     }
-
     .container {
       max-width: 700px;
       margin: auto;
     }
-
     h1 {
       text-align: center;
       color: yellow;
       margin-bottom: 20px;
     }
-
-    .info, .result {
+    .box {
       background: #1c1c1c;
       padding: 15px;
       border-radius: 12px;
       margin-bottom: 20px;
       line-height: 1.8;
     }
-
     .field {
       margin-bottom: 18px;
     }
-
     label {
       display: block;
       font-weight: bold;
       margin-bottom: 6px;
     }
-
     .input-box {
       display: flex;
       background: white;
       border-radius: 10px;
       overflow: hidden;
     }
-
     .input-box input,
     .input-box select {
       flex: 1;
@@ -59,7 +52,6 @@
       background: white;
       color: #111;
     }
-
     .unit {
       background: #ececec;
       color: black;
@@ -69,7 +61,6 @@
       font-weight: bold;
       border-left: 1px solid #ccc;
     }
-
     button {
       width: 100%;
       padding: 15px;
@@ -82,24 +73,16 @@
       cursor: pointer;
       margin-top: 8px;
     }
-
     .good { color: #00e676; font-weight: bold; }
     .warn { color: orange; font-weight: bold; }
     .bad  { color: #ff4d4d; font-weight: bold; }
-
-    .small {
-      font-size: 14px;
-      color: #ccc;
-      margin-top: 10px;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🚨 VERSION LISTES VOLTS + AH + WH 🚨</h1>
+    <h1>🚨 TEST LISTES VOLTS + AH + WH 🚨</h1>
 
-    <div class="info">
-      <b>Principe :</b> le site calcule automatiquement les Wh avec la formule <b>Volts × Ah</b>.<br>
+    <div class="box">
       <b>Exemple :</b> 60 V × 35 Ah = 2100 Wh
     </div>
 
@@ -139,18 +122,15 @@
         <select id="ah" onchange="updateWh()">
           <option value="10">10</option>
           <option value="12">12</option>
-          <option value="13">13</option>
           <option value="15">15</option>
           <option value="18">18</option>
           <option value="20">20</option>
-          <option value="21">21</option>
           <option value="24">24</option>
           <option value="28">28</option>
           <option value="30">30</option>
           <option value="35" selected>35</option>
           <option value="40">40</option>
           <option value="45">45</option>
-          <option value="50">50</option>
         </select>
         <div class="unit">Ah</div>
       </div>
@@ -198,12 +178,8 @@
 
     <button onclick="calculate()">Calculer</button>
 
-    <div class="result" id="result">
+    <div class="box" id="result">
       Clique sur calculer.
-    </div>
-
-    <div class="small">
-      Le calcul prend en compte : batterie restante, poids, volts, Ah, mode de conduite, vitesse et distance.
     </div>
   </div>
 
@@ -211,25 +187,20 @@
     function limitBattery() {
       const input = document.getElementById("battery");
       let value = parseFloat(input.value);
-
       if (isNaN(value)) return;
       if (value > 100) value = 100;
       if (value < 0) value = 0;
-
       input.value = value;
     }
 
     function updateWh() {
       const volts = parseFloat(document.getElementById("volts").value);
       const ah = parseFloat(document.getElementById("ah").value);
-
       if (isNaN(volts) || isNaN(ah)) {
         document.getElementById("wh").value = "";
         return;
       }
-
-      const wh = volts * ah;
-      document.getElementById("wh").value = wh.toFixed(0);
+      document.getElementById("wh").value = (volts * ah).toFixed(0);
     }
 
     function getWeightAdjustment(weight) {
@@ -252,14 +223,7 @@
       const speedFactor = parseFloat(document.getElementById("speed").value);
       const distance = parseFloat(document.getElementById("distance").value);
 
-      if (
-        isNaN(battery) ||
-        isNaN(weight) ||
-        isNaN(wh) ||
-        isNaN(modeWhKm) ||
-        isNaN(speedFactor) ||
-        isNaN(distance)
-      ) {
+      if (isNaN(battery) || isNaN(weight) || isNaN(wh) || isNaN(modeWhKm) || isNaN(speedFactor) || isNaN(distance)) {
         document.getElementById("result").innerHTML = "⚠️ Merci de remplir tous les champs.";
         return;
       }
@@ -270,20 +234,14 @@
       const roundTrip = distance * 2;
       const remaining = autonomy - roundTrip;
 
-      const modeName = document.getElementById("mode").options[
-        document.getElementById("mode").selectedIndex
-      ].text;
-
-      const speedName = document.getElementById("speed").options[
-        document.getElementById("speed").selectedIndex
-      ].text;
+      const modeName = document.getElementById("mode").options[document.getElementById("mode").selectedIndex].text;
+      const speedName = document.getElementById("speed").options[document.getElementById("speed").selectedIndex].text;
 
       let html = "";
       html += "🔋 <b>Batterie totale :</b> " + wh.toFixed(0) + " Wh<br>";
       html += "⚡ <b>Énergie disponible :</b> " + availableWh.toFixed(0) + " Wh<br>";
       html += "⚙️ <b>Mode :</b> " + modeName + "<br>";
       html += "🚀 <b>Vitesse :</b> " + speedName + "<br>";
-      html += "⚖️ <b>Consommation estimée :</b> " + realWhKm.toFixed(1) + " Wh/km<br>";
       html += "🛴 <b>Autonomie estimée :</b> " + autonomy.toFixed(1) + " km<br>";
       html += "📏 <b>Distance aller :</b> " + distance.toFixed(1) + " km<br>";
       html += "🔁 <b>Distance aller-retour :</b> " + roundTrip.toFixed(1) + " km<br><br>";
