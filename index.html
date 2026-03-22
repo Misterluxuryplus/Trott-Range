@@ -2,36 +2,78 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Test 2 colonnes</title>
+<title>Test compact</title>
+
 <style>
 body {
   background:#111;
   color:white;
   font-family:Arial;
-  padding:20px;
+  padding:10px;
+  margin:0;
 }
 
+h1 {
+  text-align:center;
+  color:#00e676;
+  margin:5px 0 15px;
+  font-size:24px;
+}
+
+/* GRID */
 .grid {
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:20px;
+  gap:12px;
 }
 
+/* BLOCS */
 .box {
   background:#1c1c1c;
-  padding:20px;
-  border-radius:10px;
+  padding:12px;
+  border-radius:8px;
 }
 
+/* INPUTS */
+label {
+  font-size:13px;
+  margin-bottom:4px;
+  display:block;
+}
+
+input, select {
+  width:100%;
+  padding:8px;
+  font-size:14px;
+  border-radius:6px;
+  border:none;
+}
+
+/* RESULTAT */
 .result {
-  margin-top:20px;
+  margin-top:10px;
   background:#1c1c1c;
-  padding:20px;
-  border-radius:10px;
+  padding:12px;
+  border-radius:8px;
   text-align:center;
+  font-size:14px;
 }
 
-@media(max-width:800px){
+/* BOUTON */
+button {
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  background:#00e676;
+  border:none;
+  font-weight:bold;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+/* MOBILE */
+@media(max-width:700px){
   .grid{
     grid-template-columns:1fr;
   }
@@ -41,15 +83,54 @@ body {
 
 <body>
 
-<h1 style="text-align:center;color:#00e676;">TEST 2 COLONNES</h1>
+<h1>Calculateur autonomie</h1>
 
 <div class="grid">
-  <div class="box">Colonne gauche</div>
-  <div class="box">Colonne droite</div>
+
+  <div class="box">
+    <label>Batterie (%)</label>
+    <input type="number" value="100">
+
+    <label>Poids (kg)</label>
+    <input type="number" value="107">
+
+    <label>Volts</label>
+    <select>
+      <option>60</option>
+      <option>72</option>
+    </select>
+
+    <label>Ampérage</label>
+    <select>
+      <option>35</option>
+      <option>40</option>
+    </select>
+  </div>
+
+  <div class="box">
+    <label>Mode</label>
+    <select>
+      <option>Éco</option>
+      <option>Confort</option>
+      <option>Sport</option>
+    </select>
+
+    <label>Vitesse</label>
+    <select>
+      <option>25 km/h</option>
+      <option>45 km/h</option>
+    </select>
+
+    <label>Distance</label>
+    <input type="number" value="10">
+
+    <button>Calculer</button>
+  </div>
+
 </div>
 
 <div class="result">
-Résultat ici
+Résultat autonomie ici
 </div>
 
 </body>
