@@ -3,45 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Autonomie Trott</title>
+  <title>Calcul autonomie trott</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #111;
       color: white;
-      padding: 20px;
       margin: 0;
+      padding: 20px;
     }
+
     .container {
       max-width: 700px;
       margin: auto;
     }
+
     h1 {
       text-align: center;
       color: #00e676;
       margin-bottom: 20px;
     }
+
     .info {
       background: #1c1c1c;
       padding: 15px;
       border-radius: 12px;
       margin-bottom: 20px;
-      line-height: 1.6;
+      line-height: 1.7;
     }
+
     .field {
       margin-bottom: 18px;
     }
+
     label {
       display: block;
       font-weight: bold;
       margin-bottom: 6px;
     }
+
     .input-box {
       display: flex;
       background: white;
       border-radius: 10px;
       overflow: hidden;
     }
+
     .input-box input,
     .input-box select {
       flex: 1;
@@ -52,15 +59,17 @@
       background: white;
       color: #111;
     }
+
     .unit {
       background: #ececec;
       color: black;
       padding: 14px;
-      min-width: 60px;
+      min-width: 70px;
       text-align: center;
       font-weight: bold;
       border-left: 1px solid #ccc;
     }
+
     button {
       width: 100%;
       padding: 15px;
@@ -73,6 +82,7 @@
       cursor: pointer;
       margin-top: 8px;
     }
+
     .result {
       margin-top: 22px;
       background: #1c1c1c;
@@ -80,21 +90,40 @@
       border-radius: 12px;
       line-height: 1.9;
     }
+
+    .good { color: #00e676; font-weight: bold; }
+    .warn { color: orange; font-weight: bold; }
+    .bad  { color: #ff4d4d; font-weight: bold; }
+
+    .small {
+      font-size: 14px;
+      color: #ccc;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>VERSION MODE TEST</h1>
+    <h1>🛴 Calcul autonomie trott</h1>
 
     <div class="info">
       <b>Modèle :</b> Dualtron Victor Luxury Plus 60V 35Ah<br>
-      <b>Autonomie :</b> 64 km à 100%
+      <b>Batterie réelle :</b> 2100 Wh<br>
+      <b>Base documentée :</b> 80 à 110 km réels selon usage<br>
+      <b>Calcul :</b> mode + vitesse + poids + batterie
     </div>
 
     <div class="field">
       <label for="battery">Batterie</label>
       <div class="input-box">
-        <input type="number" id="battery" value="100" min="0" max="100" oninput="limitBattery()">
+        <input
+          type="number"
+          id="battery"
+          value="100"
+          min="0"
+          max="100"
+          oninput="limitBattery()"
+        >
         <div class="unit">%</div>
       </div>
     </div>
@@ -102,7 +131,12 @@
     <div class="field">
       <label for="weight">Poids</label>
       <div class="input-box">
-        <input type="number" id="weight" value="107" min="1">
+        <input
+          type="number"
+          id="weight"
+          value="107"
+          min="1"
+        >
         <div class="unit">kg</div>
       </div>
     </div>
@@ -111,9 +145,22 @@
       <label for="mode">Mode de conduite</label>
       <div class="input-box">
         <select id="mode">
-          <option value="1">Éco</option>
-          <option value="0.9">Confort</option>
-          <option value="0.75">Escalade</option>
+          <option value="28">Éco</option>
+          <option value="34" selected>Confort</option>
+          <option value="42">Sport</option>
+          <option value="52">Escalade</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="speed">Vitesse</label>
+      <div class="input-box">
+        <select id="speed">
+          <option value="1.00">25 km/h</option>
+          <option value="1.08">35 km/h</option>
+          <option value="1.18" selected>45 km/h</option>
+          <option value="1.32">55 km/h</option>
         </select>
       </div>
     </div>
@@ -121,7 +168,12 @@
     <div class="field">
       <label for="distance">Distance aller</label>
       <div class="input-box">
-        <input type="number" id="distance" value="10" min="0">
+        <input
+          type="number"
+          id="distance"
+          value="10"
+          min="0"
+        >
         <div class="unit">km</div>
       </div>
     </div>
@@ -129,42 +181,99 @@
     <button onclick="calculate()">Calculer</button>
 
     <div class="result" id="result">
-      Test en attente.
+      Entre tes valeurs puis clique sur calculer.
+    </div>
+
+    <div class="small">
+      Les modes viennent des plages Wh/km du document. La vitesse ajoute une surconsommation modérée.
     </div>
   </div>
 
   <script>
     function limitBattery() {
-      const input = document.getElementById("battery");
-      let v = parseFloat(input.value);
-      if (isNaN(v)) return;
-      if (v > 100) v = 100;
-      if (v < 0) v = 0;
-      input.value = v;
+      const batteryInput = document.getElementById("battery");
+      let value = parseFloat(batteryInput.value);
+
+      if (isNaN(value)) return;
+      if (value > 100) value = 100;
+      if (value < 0) value = 0;
+
+      batteryInput.value = value;
+    }
+
+    function getWeightAdjustment(weight) {
+      if (weight <= 70) return 0.92;
+      if (weight <= 85) return 0.97;
+      if (weight <= 100) return 1.00;
+      if (weight <= 115) return 1.05;
+      if (weight <= 130) return 1.12;
+      return 1.20;
     }
 
     function calculate() {
       limitBattery();
 
-      const base = 64;
-      let battery = parseFloat(document.getElementById("battery").value) / 100;
+      const totalWh = 2100;
+
+      let battery = parseFloat(document.getElementById("battery").value);
       let weight = parseFloat(document.getElementById("weight").value);
-      let mode = parseFloat(document.getElementById("mode").value);
+      let modeWhKm = parseFloat(document.getElementById("mode").value);
+      let speedFactor = parseFloat(document.getElementById("speed").value);
       let distance = parseFloat(document.getElementById("distance").value);
 
-      let weightCoef = 1;
-      if (weight > 80) weightCoef = 0.93;
-      if (weight > 95) weightCoef = 0.85;
-      if (weight > 110) weightCoef = 0.78;
+      if (
+        isNaN(battery) ||
+        isNaN(weight) ||
+        isNaN(modeWhKm) ||
+        isNaN(speedFactor) ||
+        isNaN(distance)
+      ) {
+        document.getElementById("result").innerHTML =
+          "⚠️ Merci de remplir tous les champs.";
+        return;
+      }
 
-      const autonomy = base * battery * weightCoef * mode;
+      const batteryRatio = battery / 100;
+      const availableWh = totalWh * batteryRatio;
+
+      const weightAdjustment = getWeightAdjustment(weight);
+      const realWhKm = modeWhKm * weightAdjustment * speedFactor;
+
+      const autonomy = availableWh / realWhKm;
       const roundTrip = distance * 2;
+      const remaining = autonomy - roundTrip;
 
-      document.getElementById("result").innerHTML =
-        "Mode choisi : <b>" + document.getElementById("mode").options[document.getElementById("mode").selectedIndex].text + "</b><br>" +
-        "Batterie : <b>" + document.getElementById("battery").value + "%</b><br>" +
-        "Autonomie estimée : <b>" + autonomy.toFixed(1) + " km</b><br>" +
-        "Aller-retour : <b>" + roundTrip.toFixed(1) + " km</b>";
+      const modeName = document.getElementById("mode").options[
+        document.getElementById("mode").selectedIndex
+      ].text;
+
+      const speedName = document.getElementById("speed").options[
+        document.getElementById("speed").selectedIndex
+      ].text;
+
+      let result = "";
+      result += "🔋 <b>Énergie disponible :</b> " + availableWh.toFixed(0) + " Wh<br>";
+      result += "⚙️ <b>Mode :</b> " + modeName + "<br>";
+      result += "🚀 <b>Vitesse :</b> " + speedName + "<br>";
+      result += "⚖️ <b>Consommation estimée :</b> " + realWhKm.toFixed(1) + " Wh/km<br>";
+      result += "🛴 <b>Autonomie estimée :</b> " + autonomy.toFixed(1) + " km<br>";
+      result += "📏 <b>Distance aller :</b> " + distance.toFixed(1) + " km<br>";
+      result += "🔁 <b>Distance aller-retour :</b> " + roundTrip.toFixed(1) + " km<br><br>";
+
+      if (autonomy >= roundTrip) {
+        result += "✅ <b>Aller :</b> <span class='good'>OUI</span><br>";
+        result += "✅ <b>Aller-retour :</b> <span class='good'>OUI</span><br>";
+        result += "📉 <b>Marge restante :</b> " + remaining.toFixed(1) + " km";
+      } else if (autonomy >= distance) {
+        result += "✅ <b>Aller :</b> <span class='good'>OUI</span><br>";
+        result += "⚠️ <b>Aller-retour :</b> <span class='warn'>NON, retour risqué</span><br>";
+        result += "👉 <b>Conseil :</b> baisse la vitesse ou le mode avant le retour";
+      } else {
+        result += "❌ <b>Aller :</b> <span class='bad'>NON</span><br>";
+        result += "❌ <b>Trajet impossible</b>";
+      }
+
+      document.getElementById("result").innerHTML = result;
     }
   </script>
 </body>
