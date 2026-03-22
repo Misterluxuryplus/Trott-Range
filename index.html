@@ -96,7 +96,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>🚨 VERSION COMPLÈTE VOLTS + AH + WH 🚨</h1>
+    <h1>🚨 VERSION LISTES VOLTS + AH + WH 🚨</h1>
 
     <div class="info">
       <b>Principe :</b> le site calcule automatiquement les Wh avec la formule <b>Volts × Ah</b>.<br>
@@ -122,7 +122,13 @@
     <div class="field">
       <label for="volts">Volts</label>
       <div class="input-box">
-        <input type="number" id="volts" value="60" min="1" oninput="updateWh()">
+        <select id="volts" onchange="updateWh()">
+          <option value="36">36</option>
+          <option value="48">48</option>
+          <option value="52">52</option>
+          <option value="60" selected>60</option>
+          <option value="72">72</option>
+        </select>
         <div class="unit">V</div>
       </div>
     </div>
@@ -130,7 +136,22 @@
     <div class="field">
       <label for="ah">Ampérage</label>
       <div class="input-box">
-        <input type="number" id="ah" value="35" min="1" step="0.1" oninput="updateWh()">
+        <select id="ah" onchange="updateWh()">
+          <option value="10">10</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="15">15</option>
+          <option value="18">18</option>
+          <option value="20">20</option>
+          <option value="21">21</option>
+          <option value="24">24</option>
+          <option value="28">28</option>
+          <option value="30">30</option>
+          <option value="35" selected>35</option>
+          <option value="40">40</option>
+          <option value="45">45</option>
+          <option value="50">50</option>
+        </select>
         <div class="unit">Ah</div>
       </div>
     </div>
