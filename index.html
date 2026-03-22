@@ -3,26 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculateur autonomie</title>
+  <title>Calculateur autonomie V6</title>
   <style>
-    body { font-family: Arial, sans-serif; background:#111; color:white; margin:0; padding:20px; }
-    .container { max-width:700px; margin:auto; }
-    h1 { text-align:center; color:#00e676; margin-bottom:20px; }
-    .box { background:#1c1c1c; padding:15px; border-radius:12px; margin-bottom:20px; line-height:1.8; }
-    .field { margin-bottom:18px; }
-    label { display:block; font-weight:bold; margin-bottom:6px; }
-    .input-box { display:flex; background:white; border-radius:10px; overflow:hidden; }
-    .input-box input, .input-box select {
-      flex:1; border:none; padding:14px; font-size:16px; outline:none; background:white; color:#111;
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #00e676;
+      margin-bottom: 10px;
+    }
+    .version {
+      text-align: center;
+      color: yellow;
+      font-weight: bold;
+      margin-bottom: 25px;
+    }
+    .field {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .input-box {
+      display: flex;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .input-box input,
+    .input-box select {
+      flex: 1;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      outline: none;
+      background: white;
+      color: #111;
     }
     .unit {
-      background:#ececec; color:black; padding:14px; min-width:70px; text-align:center; font-weight:bold; border-left:1px solid #ccc;
+      background: #ececec;
+      color: black;
+      padding: 14px;
+      min-width: 70px;
+      text-align: center;
+      font-weight: bold;
+      border-left: 1px solid #ccc;
+    }
+    .box {
+      background: #1c1c1c;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 20px;
+      line-height: 1.8;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Calculateur autonomie</h1>
+    <div class="version">VERSION V6</div>
 
     <div class="field">
       <label for="volts">Volts</label>
@@ -63,7 +113,7 @@
     </div>
 
     <div class="box" id="result">
-      Version propre chargée 👍
+      Version V6 chargée.
     </div>
   </div>
 
@@ -73,7 +123,6 @@
       const ah = parseFloat(document.getElementById("ah").value);
       document.getElementById("wh").value = (volts * ah).toFixed(0);
     }
-
     updateWh();
   </script>
 </body>
