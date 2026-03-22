@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TEST VOLTS AH OK</title>
+  <title>Calculateur autonomie</title>
   <style>
     body { font-family: Arial, sans-serif; background:#111; color:white; margin:0; padding:20px; }
     .container { max-width:700px; margin:auto; }
-    h1 { text-align:center; color:red; margin-bottom:20px; }
+    h1 { text-align:center; color:#00e676; margin-bottom:20px; }
     .box { background:#1c1c1c; padding:15px; border-radius:12px; margin-bottom:20px; line-height:1.8; }
     .field { margin-bottom:18px; }
     label { display:block; font-weight:bold; margin-bottom:6px; }
@@ -22,7 +22,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>🚨 TEST VOLTS + AH + WH OK 🚨</h1>
+    <h1>Calculateur autonomie</h1>
 
     <div class="field">
       <label for="volts">Volts</label>
@@ -62,7 +62,9 @@
       </div>
     </div>
 
-    <div class="box" id="result">Version test chargée.</div>
+    <div class="box" id="result">
+      Version propre chargée 👍
+    </div>
   </div>
 
   <script>
@@ -71,6 +73,7 @@
       const ah = parseFloat(document.getElementById("ah").value);
       document.getElementById("wh").value = (volts * ah).toFixed(0);
     }
+
     updateWh();
   </script>
 </body>
