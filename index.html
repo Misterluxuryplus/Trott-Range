@@ -1,197 +1,225 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Autonomie Trott</title>
-
-<style>
-body { font-family: Arial; background:#111; color:white; padding:20px; }
-.container { max-width:600px; margin:auto; }
-h1 { text-align:center; }
-
-.info {
-  background:#1c1c1c;
-  padding:15px;
-  border-radius:10px;
-  margin-bottom:20px;
-}
-
-.field { margin-bottom:15px; }
-
-label { font-weight:bold; display:block; margin-bottom:5px; }
-
-.input-box {
-  display:flex;
-  background:white;
-  border-radius:8px;
-  overflow:hidden;
-}
-
-.input-box input,
-.input-box select {
-  flex:1;
-  padding:12px;
-  border:none;
-  font-size:16px;
-}
-
-.unit {
-  background:#eee;
-  color:black;
-  padding:12px;
-  font-weight:bold;
-  min-width:60px;
-  text-align:center;
-}
-
-button {
-  width:100%;
-  padding:15px;
-  background:#00e676;
-  border:none;
-  font-weight:bold;
-  border-radius:8px;
-  margin-top:10px;
-}
-
-.result {
-  margin-top:20px;
-  background:#1c1c1c;
-  padding:15px;
-  border-radius:10px;
-  line-height:1.8;
-}
-
-.good { color:#00e676; }
-.warn { color:orange; }
-.bad { color:red; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomie Trott</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .info {
+      background: #1c1c1c;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .field {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .input-box {
+      display: flex;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .input-box input,
+    .input-box select {
+      flex: 1;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      outline: none;
+      background: white;
+      color: #111;
+    }
+    .unit {
+      background: #ececec;
+      color: black;
+      padding: 14px;
+      min-width: 60px;
+      text-align: center;
+      font-weight: bold;
+      border-left: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background: #00e676;
+      color: black;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .result {
+      margin-top: 22px;
+      background: #1c1c1c;
+      padding: 16px;
+      border-radius: 12px;
+      line-height: 1.9;
+    }
+    .good { color: #00e676; font-weight: bold; }
+    .warn { color: orange; font-weight: bold; }
+    .bad { color: #ff4d4d; font-weight: bold; }
+  </style>
 </head>
-
 <body>
+  <div class="container">
+    <h1>🛴 Calcul autonomie trott</h1>
 
-<div class="container">
+    <div class="info">
+      <b>Modèle :</b> Dualtron Victor Luxury Plus 60V 35Ah<br>
+      <b>Autonomie :</b> 64 km à 100%
+    </div>
 
-<h1>🛴 Calcul autonomie trott</h1>
+    <div class="field">
+      <label for="battery">Batterie</label>
+      <div class="input-box">
+        <input
+          type="number"
+          id="battery"
+          value="100"
+          min="0"
+          max="100"
+          oninput="limitBattery()"
+        >
+        <div class="unit">%</div>
+      </div>
+    </div>
 
-<div class="info">
-<b>Modèle :</b> Dualtron Victor Luxury Plus 60V 35Ah<br>
-<b>Autonomie :</b> 64 km à 100%
-</div>
+    <div class="field">
+      <label for="weight">Poids</label>
+      <div class="input-box">
+        <input type="number" id="weight" value="107" min="1">
+        <div class="unit">kg</div>
+      </div>
+    </div>
 
-<!-- Batterie -->
-<div class="field">
-<label>Batterie</label>
-<div class="input-box">
-<input type="number" id="battery" value="100" max="100">
-<div class="unit">%</div>
-</div>
-</div>
+    <div class="field">
+      <label for="mode">Mode de conduite</label>
+      <div class="input-box">
+        <select id="mode">
+          <option value="1">Éco</option>
+          <option value="0.9">Confort</option>
+          <option value="0.75">Escalade</option>
+        </select>
+      </div>
+    </div>
 
-<!-- Poids -->
-<div class="field">
-<label>Poids</label>
-<div class="input-box">
-<input type="number" id="weight" value="107">
-<div class="unit">kg</div>
-</div>
-</div>
+    <div class="field">
+      <label for="speed">Vitesse</label>
+      <div class="input-box">
+        <select id="speed">
+          <option value="1">25 km/h</option>
+          <option value="0.9">35 km/h</option>
+          <option value="0.8">45 km/h</option>
+          <option value="0.65">55 km/h</option>
+        </select>
+      </div>
+    </div>
 
-<!-- Mode -->
-<div class="field">
-<label>Mode de conduite</label>
-<div class="input-box">
-<select id="mode">
-<option value="1">🐢 Éco (max autonomie)</option>
-<option value="0.9">🚗 Confort (normal)</option>
-<option value="0.75">🏔️ Escalade (consomme +)</option>
-</select>
-</div>
-</div>
+    <div class="field">
+      <label for="distance">Distance aller</label>
+      <div class="input-box">
+        <input type="number" id="distance" value="10" min="0">
+        <div class="unit">km</div>
+      </div>
+    </div>
 
-<!-- Vitesse -->
-<div class="field">
-<label>Vitesse</label>
-<div class="input-box">
-<select id="speed">
-<option value="1">25 km/h</option>
-<option value="0.9">35 km/h</option>
-<option value="0.8">45 km/h</option>
-<option value="0.65">55 km/h</option>
-</select>
-</div>
-</div>
+    <button onclick="calculate()">Calculer</button>
 
-<!-- Distance -->
-<div class="field">
-<label>Distance aller</label>
-<div class="input-box">
-<input type="number" id="distance" value="10">
-<div class="unit">km</div>
-</div>
-</div>
+    <div class="result" id="result">
+      Entre tes valeurs puis clique sur calculer.
+    </div>
+  </div>
 
-<button onclick="calculate()">Calculer</button>
+  <script>
+    function limitBattery() {
+      const batteryInput = document.getElementById("battery");
+      let value = parseFloat(batteryInput.value);
 
-<div class="result" id="result">
-Entre tes valeurs puis clique sur calculer
-</div>
+      if (isNaN(value)) return;
+      if (value > 100) value = 100;
+      if (value < 0) value = 0;
 
-</div>
+      batteryInput.value = value;
+    }
 
-<script>
-function calculate() {
+    function calculate() {
+      limitBattery();
 
-let base = 64;
+      const base = 64;
 
-// récupération
-let battery = document.getElementById("battery").value;
-if(battery > 100) battery = 100;
+      let battery = parseFloat(document.getElementById("battery").value);
+      let weight = parseFloat(document.getElementById("weight").value);
+      let mode = parseFloat(document.getElementById("mode").value);
+      let speed = parseFloat(document.getElementById("speed").value);
+      let distance = parseFloat(document.getElementById("distance").value);
 
-battery = battery / 100;
+      if (
+        isNaN(battery) ||
+        isNaN(weight) ||
+        isNaN(mode) ||
+        isNaN(speed) ||
+        isNaN(distance)
+      ) {
+        document.getElementById("result").innerHTML =
+          "⚠️ Merci de remplir tous les champs.";
+        return;
+      }
 
-let weight = document.getElementById("weight").value;
-let speed = document.getElementById("speed").value;
-let mode = document.getElementById("mode").value;
-let distance = document.getElementById("distance").value;
+      battery = battery / 100;
 
-// poids
-let weightCoef = 1;
-if(weight > 80) weightCoef = 0.93;
-if(weight > 95) weightCoef = 0.85;
-if(weight > 110) weightCoef = 0.78;
+      let weightCoef = 1;
+      if (weight > 80) weightCoef = 0.93;
+      if (weight > 95) weightCoef = 0.85;
+      if (weight > 110) weightCoef = 0.78;
 
-// calcul
-let autonomy = base * battery * weightCoef * speed * mode;
-let roundTrip = distance * 2;
-let remaining = autonomy - roundTrip;
+      const autonomy = base * battery * weightCoef * mode * speed;
+      const roundTrip = distance * 2;
+      const remaining = autonomy - roundTrip;
 
-// affichage
-let result = "";
+      let result = "";
+      result += "🔋 <b>Autonomie estimée :</b> " + autonomy.toFixed(1) + " km<br>";
+      result += "📏 <b>Distance aller :</b> " + distance.toFixed(1) + " km<br>";
+      result += "🔁 <b>Distance aller-retour :</b> " + roundTrip.toFixed(1) + " km<br><br>";
 
-result += "🔋 Autonomie : " + autonomy.toFixed(1) + " km<br>";
-result += "📏 Aller : " + distance + " km<br>";
-result += "🔁 Aller-retour : " + roundTrip + " km<br><br>";
+      if (autonomy >= roundTrip) {
+        result += "✅ <b>Aller :</b> <span class='good'>OUI</span><br>";
+        result += "✅ <b>Aller-retour :</b> <span class='good'>OUI</span><br>";
+        result += "📉 <b>Marge restante :</b> " + remaining.toFixed(1) + " km";
+      } else if (autonomy >= distance) {
+        result += "✅ <b>Aller :</b> <span class='good'>OUI</span><br>";
+        result += "⚠️ <b>Aller-retour :</b> <span class='warn'>NON, retour risqué</span><br>";
+        result += "👉 <b>Conseil :</b> passe en mode Éco ou baisse la vitesse";
+      } else {
+        result += "❌ <b>Aller :</b> <span class='bad'>NON</span><br>";
+        result += "❌ <b>Trajet impossible</b>";
+      }
 
-if(autonomy >= roundTrip){
-  result += "✅ Aller : OUI<br>";
-  result += "✅ Aller-retour : OUI<br>";
-  result += "Marge : " + remaining.toFixed(1) + " km";
-}
-else if(autonomy >= distance){
-  result += "✅ Aller : OUI<br>";
-  result += "⚠️ Retour risqué<br>";
-  result += "👉 Conseil : passe en mode Éco";
-}
-else{
-  result += "❌ Trajet impossible";
-}
-
-document.getElementById("result").innerHTML = result;
-
-}
-</script>
-
+      document.getElementById("result").innerHTML = result;
+    }
+  </script>
 </body>
 </html>
