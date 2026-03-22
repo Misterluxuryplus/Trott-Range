@@ -14,7 +14,7 @@
     }
 
     .container {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
     }
 
@@ -29,6 +29,7 @@
       padding: 15px;
       margin-bottom: 20px;
       border: 1px solid #333;
+      line-height: 1.6;
     }
 
     .field {
@@ -57,6 +58,8 @@
       padding: 14px;
       font-size: 16px;
       outline: none;
+      background: white;
+      color: #111;
     }
 
     .unit {
@@ -64,7 +67,7 @@
       color: #333;
       padding: 14px;
       font-weight: bold;
-      min-width: 55px;
+      min-width: 60px;
       text-align: center;
       border-left: 1px solid #ccc;
     }
@@ -79,6 +82,7 @@
       background: #00e676;
       color: black;
       cursor: pointer;
+      margin-top: 8px;
     }
 
     .result {
@@ -86,7 +90,7 @@
       background: #1c1c1c;
       border-radius: 10px;
       padding: 15px;
-      line-height: 1.8;
+      line-height: 1.9;
       border: 1px solid #333;
     }
 
@@ -143,7 +147,7 @@
     <button onclick="calculate()">Calculer</button>
 
     <div class="result" id="result">
-      Entre tes valeurs puis clique sur Calculer.
+      Entre tes valeurs puis clique sur <b>Calculer</b>.
     </div>
   </div>
 
@@ -151,7 +155,7 @@
     function calculate() {
       let base = 64;
 
-      let battery = parseFloat(document.getElementById("battery").value) / 100;
+      let battery = parseFloat(document.getElementById("battery").value);
       let weight = parseFloat(document.getElementById("weight").value);
       let speed = parseFloat(document.getElementById("speed").value);
       let distance = parseFloat(document.getElementById("distance").value);
@@ -161,8 +165,9 @@
         return;
       }
 
-      let weightCoef = 1;
+      battery = battery / 100;
 
+      let weightCoef = 1;
       if (weight > 80) weightCoef = 0.93;
       if (weight > 95) weightCoef = 0.85;
       if (weight > 110) weightCoef = 0.78;
@@ -177,15 +182,15 @@
       result += "🔁 <b>Distance aller-retour :</b> " + roundTrip.toFixed(1) + " km<br><br>";
 
       if (autonomy >= roundTrip) {
-        result += "➡️ Aller : <span class='good'>OUI</span><br>";
-        result += "🔁 Aller-retour : <span class='good'>OUI</span><br>";
+        result += "➡️ <b>Aller :</b> <span class='good'>OUI</span><br>";
+        result += "🔁 <b>Aller-retour :</b> <span class='good'>OUI</span><br>";
         result += "✅ <b>Marge estimée :</b> " + remaining.toFixed(1) + " km";
       } else if (autonomy >= distance) {
-        result += "➡️ Aller : <span class='good'>OUI</span><br>";
-        result += "🔁 Aller-retour : <span class='warn'>NON, retour risqué</span><br>";
+        result += "➡️ <b>Aller :</b> <span class='good'>OUI</span><br>";
+        result += "🔁 <b>Aller-retour :</b> <span class='warn'>NON, retour risqué</span><br>";
         result += "⚠️ <b>Conseil :</b> baisse ta vitesse ou recharge avant le retour";
       } else {
-        result += "➡️ Aller : <span class='bad'>NON</span><br>";
+        result += "➡️ <b>Aller :</b> <span class='bad'>NON</span><br>";
         result += "❌ <b>Trajet impossible</b>";
       }
 
