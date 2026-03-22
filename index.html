@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Autonomie Trott</title>
+<style>
+body { font-family: Arial; padding: 20px; background:#111; color:white; }
+input, select, button { width:100%; padding:10px; margin:10px 0; font-size:16px; }
+button { background:#00ff88; border:none; }
+.result { margin-top:20px; font-size:18px; }
+</style>
+</head>
+
+<body>
+
+<h2>🛴 Calcul autonomie trott</h2>
+
+<input type="number" id="battery" placeholder="Batterie (%)">
+
+<input type="number" id="weight" placeholder="Poids (kg)">
+
+<select id="speed">
+<option value="1">25 km/h</option>
+<option value="0.9">35 km/h</option>
+<option value="0.8">45 km/h</option>
+<option value="0.65">55 km/h</option>
+</select>
+
+<input type="number" id="distance" placeholder="Distance aller (km)">
+
+<button onclick="calculate()">Calculer</button>
+
+<div class="result" id="result"></div>
+
+<script>
+function calculate() {
+let base = 55;
+
+let battery = document.getElementById("battery").value / 100;
+let weight = document.getElementById("weight").value;
+let speed = document.getElementById("speed").value;
+let distance = document.getElementById("distance").value;
+
+let weightCoef = 1;
+
+if(weight > 80) weightCoef = 0.93;
+if(weight > 95) weightCoef = 0.85;
+if(weight > 110) weightCoef = 0.78;
+
+let autonomy = base * battery * weightCoef * speed;
+let roundTrip = distance * 2;
+
+let resultText = "Autonomie estimée : " + autonomy.toFixed(1) + " km<br>";
+
+if(autonomy >= roundTrip) {
+resultText += "✅ Aller-retour possible";
+} else if(autonomy >= distance) {
+resultText += "⚠️ Aller possible, retour risqué";
+} else {
+resultText += "❌ Trajet impossible";
+}
+
+document.getElementById("result").innerHTML = resultText;
+}
+</script>
+
+</body>
+</html>
