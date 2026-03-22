@@ -3,49 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Autonomie Trott</title>
-
+<title>TEST NOUVELLE VERSION</title>
 <style>
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #111;
   color: white;
   padding: 20px;
 }
-
 .container {
-  max-width: 600px;
+  max-width: 700px;
   margin: auto;
 }
-
 h1 {
   text-align: center;
+  color: yellow;
 }
-
 .info {
-  background: #1c1c1c;
+  background: #222;
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 20px;
 }
-
 .field {
   margin-bottom: 15px;
 }
-
 label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
 }
-
 .input-box {
   display: flex;
   background: white;
   border-radius: 8px;
   overflow: hidden;
 }
-
 .input-box input,
 .input-box select {
   flex: 1;
@@ -53,14 +46,14 @@ label {
   padding: 12px;
   font-size: 16px;
 }
-
 .unit {
-  background: #eee;
+  background: #ddd;
   color: black;
   padding: 12px;
   font-weight: bold;
+  min-width: 60px;
+  text-align: center;
 }
-
 button {
   width: 100%;
   padding: 15px;
@@ -71,26 +64,19 @@ button {
   border-radius: 8px;
   margin-top: 10px;
 }
-
 .result {
   margin-top: 20px;
-  background: #1c1c1c;
+  background: #222;
   padding: 15px;
   border-radius: 10px;
   line-height: 1.8;
 }
-
-.good { color: #00e676; }
-.warn { color: orange; }
-.bad { color: red; }
 </style>
 </head>
-
 <body>
-
 <div class="container">
 
-<h1>🛴 Calcul autonomie trott</h1>
+<h1>🚨 NOUVELLE VERSION TEST 🚨</h1>
 
 <div class="info">
 <b>Modèle :</b> Dualtron Victor Luxury Plus 60V 35Ah<br>
@@ -98,7 +84,7 @@ button {
 </div>
 
 <div class="field">
-<label>Batterie</label>
+<label>Batterie actuelle</label>
 <div class="input-box">
 <input type="number" id="battery" value="100">
 <div class="unit">%</div>
@@ -106,7 +92,7 @@ button {
 </div>
 
 <div class="field">
-<label>Poids</label>
+<label>Poids du pilote</label>
 <div class="input-box">
 <input type="number" id="weight" value="107">
 <div class="unit">kg</div>
@@ -114,7 +100,7 @@ button {
 </div>
 
 <div class="field">
-<label>Vitesse</label>
+<label>Vitesse prévue</label>
 <div class="input-box">
 <select id="speed">
 <option value="1">25 km/h</option>
@@ -136,52 +122,31 @@ button {
 <button onclick="calculate()">Calculer</button>
 
 <div class="result" id="result">
-Entre tes valeurs puis clique sur calculer
+Version test chargée.
 </div>
 
 </div>
 
 <script>
 function calculate() {
+  let base = 64;
+  let battery = document.getElementById("battery").value / 100;
+  let weight = document.getElementById("weight").value;
+  let speed = document.getElementById("speed").value;
+  let distance = document.getElementById("distance").value;
 
-let base = 64;
+  let weightCoef = 1;
+  if(weight > 80) weightCoef = 0.93;
+  if(weight > 95) weightCoef = 0.85;
+  if(weight > 110) weightCoef = 0.78;
 
-let battery = document.getElementById("battery").value / 100;
-let weight = document.getElementById("weight").value;
-let speed = document.getElementById("speed").value;
-let distance = document.getElementById("distance").value;
+  let autonomy = base * battery * weightCoef * speed;
+  let roundTrip = distance * 2;
 
-let weightCoef = 1;
-
-if(weight > 80) weightCoef = 0.93;
-if(weight > 95) weightCoef = 0.85;
-if(weight > 110) weightCoef = 0.78;
-
-let autonomy = base * battery * weightCoef * speed;
-let roundTrip = distance * 2;
-let remaining = autonomy - roundTrip;
-
-let result = "";
-
-result += "🔋 Autonomie : " + autonomy.toFixed(1) + " km<br>";
-result += "📏 Aller : " + distance + " km<br>";
-result += "🔁 Aller-retour : " + roundTrip + " km<br><br>";
-
-if(autonomy >= roundTrip){
-  result += "✅ Aller : OUI<br>";
-  result += "✅ Aller-retour : OUI<br>";
-  result += "Marge restante : " + remaining.toFixed(1) + " km";
-}
-else if(autonomy >= distance){
-  result += "✅ Aller : OUI<br>";
-  result += "⚠️ Retour risqué";
-}
-else{
-  result += "❌ Trajet impossible";
-}
-
-document.getElementById("result").innerHTML = result;
-
+  document.getElementById("result").innerHTML =
+    "🔋 Autonomie estimée : " + autonomy.toFixed(1) + " km<br>" +
+    "📏 Aller : " + distance + " km<br>" +
+    "🔁 Aller-retour : " + roundTrip + " km";
 }
 </script>
 
