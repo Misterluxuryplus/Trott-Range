@@ -104,6 +104,30 @@ input, select{
   border-radius:8px;
 }
 
+/* boutons rapides */
+.quick-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.quick-btn{
+  border:none;
+  border-radius:12px;
+  padding:10px 12px;
+  background:#232323;
+  color:white;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.quick-btn:hover{
+  background:#2d2d2d;
+}
+
 .actions{
   margin-top:12px;
 }
@@ -335,6 +359,13 @@ button:active{
     <div class="card">
       <div class="card-title">🔋 Batterie / Trott</div>
 
+      <div class="quick-buttons">
+        <button class="quick-btn" onclick="setBatteryPreset(52,20)">52V 20Ah</button>
+        <button class="quick-btn" onclick="setBatteryPreset(60,35)">60V 35Ah</button>
+        <button class="quick-btn" onclick="setBatteryPreset(72,40)">72V 40Ah</button>
+        <button class="quick-btn" onclick="setBatteryPreset(72,50)">72V 50Ah</button>
+      </div>
+
       <label>Batterie (%)</label>
       <div class="input-wrap">
         <input type="number" id="battery" value="100" min="0" max="100">
@@ -476,6 +507,12 @@ function updateWh(){
   document.getElementById("wh").value = (v * ah).toFixed(0);
 }
 
+function setBatteryPreset(v, ah){
+  document.getElementById("volts").value = v;
+  document.getElementById("ah").value = ah;
+  updateWh();
+}
+
 function getWeightFactor(weight){
   if(weight <= 65) return 0.90;
   if(weight <= 75) return 0.95;
@@ -540,7 +577,6 @@ function calc(){
   let dispo = wh * (battery / 100);
   let weightFactor = getWeightFactor(weight);
 
-  // Calcul public réaliste + prudent
   let consoBase = mode * speed * weightFactor;
   let conso = consoBase * 1.12;
 
