@@ -1,627 +1,249 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculateur autonomie</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculateur autonomie trottinette</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #f7f9fc, #e9eef7);
+      margin: 0;
+      padding: 20px;
+      color: #222;
+    }
 
-<style>
-*{
-  box-sizing:border-box;
-}
+    .app {
+      max-width: 460px;
+      margin: auto;
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      padding: 22px;
+    }
 
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(180deg,#0d0d0d 0%, #141414 100%);
-  color:white;
-  padding:12px;
-}
+    h1 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
 
-.app{
-  max-width:900px;
-  margin:0 auto;
-}
+    p.top {
+      text-align: center;
+      font-size: 15px;
+      color: #666;
+      margin-bottom: 20px;
+    }
 
-.header{
-  text-align:center;
-  margin-bottom:12px;
-}
+    .section {
+      margin-bottom: 22px;
+    }
 
-.header h1{
-  margin:0;
-  color:#00e676;
-  font-size:24px;
-  font-weight:800;
-}
+    .section label {
+      display: block;
+      font-weight: bold;
+      font-size: 17px;
+      margin-bottom: 10px;
+    }
 
-.header p{
-  margin:6px 0 0;
-  color:#bdbdbd;
-  font-size:13px;
-}
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
+    .choice-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: bold;
+      background: #edf2ff;
+      color: #234;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.07);
+    }
 
-.card{
-  background:rgba(28,28,28,0.95);
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:18px;
-  padding:14px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.25);
-}
+    .choice-btn:hover {
+      transform: translateY(-1px);
+    }
 
-.card-title{
-  font-size:16px;
-  font-weight:700;
-  margin-bottom:10px;
-  color:#ffffff;
-}
+    .choice-btn.active {
+      background: #2f6bff;
+      color: white;
+    }
 
-label{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  color:#e6e6e6;
-  margin:8px 0 5px;
-}
+    input[type="number"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #d5dbe8;
+      font-size: 17px;
+    }
 
-.input-wrap{
-  position:relative;
-}
+    .main-btn {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: bold;
+      background: linear-gradient(90deg, #2f6bff, #5f8cff);
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 8px 20px rgba(47,107,255,0.25);
+    }
 
-input, select{
-  width:100%;
-  padding:12px 12px;
-  font-size:15px;
-  border:none;
-  border-radius:12px;
-  outline:none;
-  background:#f5f5f5;
-  color:#111;
-}
+    .result {
+      margin-top: 22px;
+      background: #f4f8ff;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1.5;
+    }
 
-.readonly{
-  background:#dfe8df !important;
-  font-weight:700;
-}
-
-.unit{
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#444;
-  font-size:12px;
-  font-weight:700;
-  pointer-events:none;
-  background:#eaeaea;
-  padding:3px 7px;
-  border-radius:8px;
-}
-
-/* boutons rapides */
-.quick-buttons{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:12px;
-}
-
-.quick-btn{
-  border:none;
-  border-radius:12px;
-  padding:10px 12px;
-  background:#232323;
-  color:white;
-  font-size:13px;
-  font-weight:700;
-  cursor:pointer;
-  border:1px solid rgba(255,255,255,0.08);
-}
-
-.quick-btn:hover{
-  background:#2d2d2d;
-}
-
-.actions{
-  margin-top:12px;
-}
-
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(180deg,#00f07a 0%, #00d966 100%);
-  color:#0e0e0e;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 6px 16px rgba(0,230,118,0.25);
-}
-
-button:active{
-  transform:scale(0.99);
-}
-
-/* RESULTAT */
-.result-card{
-  margin-top:12px;
-  background:rgba(28,28,28,0.98);
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:18px;
-  padding:16px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.25);
-  transition:0.2s;
-}
-
-.result-card.ok{
-  border:1px solid rgba(0,230,118,0.35);
-  box-shadow:0 8px 22px rgba(0,230,118,0.10);
-}
-
-.result-card.warn{
-  border:1px solid rgba(255,179,0,0.35);
-  box-shadow:0 8px 22px rgba(255,179,0,0.10);
-}
-
-.result-card.bad{
-  border:1px solid rgba(255,82,82,0.35);
-  box-shadow:0 8px 22px rgba(255,82,82,0.10);
-}
-
-.result-title{
-  font-size:18px;
-  font-weight:800;
-  color:#00e676;
-  margin-bottom:12px;
-}
-
-.result-top{
-  display:grid;
-  grid-template-columns:1.2fr 1fr;
-  gap:12px;
-  margin-bottom:14px;
-}
-
-.big-box{
-  background:#131313;
-  border-radius:16px;
-  padding:14px;
-}
-
-.big-label{
-  font-size:12px;
-  color:#aaaaaa;
-  margin-bottom:6px;
-}
-
-.big-value{
-  font-size:30px;
-  font-weight:800;
-  line-height:1.1;
-}
-
-.status-box{
-  background:#131313;
-  border-radius:16px;
-  padding:14px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-.status-label{
-  font-size:12px;
-  color:#aaaaaa;
-  margin-bottom:6px;
-}
-
-.status-value{
-  font-size:24px;
-  font-weight:800;
-  line-height:1.2;
-}
-
-.result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:10px;
-}
-
-.metric{
-  background:#131313;
-  border-radius:14px;
-  padding:12px;
-}
-
-.metric-label{
-  font-size:12px;
-  color:#aaaaaa;
-  margin-bottom:4px;
-}
-
-.metric-value{
-  font-size:18px;
-  font-weight:700;
-}
-
-.battery-bar-wrap{
-  margin-top:14px;
-}
-
-.battery-bar-label{
-  font-size:12px;
-  color:#aaaaaa;
-  margin-bottom:6px;
-}
-
-.battery-bar{
-  width:100%;
-  height:14px;
-  background:#2a2a2a;
-  border-radius:999px;
-  overflow:hidden;
-}
-
-.battery-fill{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#00e676,#7cffcb);
-  border-radius:999px;
-  transition:width 0.3s ease;
-}
-
-.battery-fill.warn{
-  background:linear-gradient(90deg,#ffb300,#ffd166);
-}
-
-.battery-fill.bad{
-  background:linear-gradient(90deg,#ff5252,#ff8a80);
-}
-
-.note{
-  margin-top:12px;
-  font-size:12px;
-  color:#a8a8a8;
-  line-height:1.5;
-}
-
-.good{color:#00e676;font-weight:800;}
-.warn{color:#ffb300;font-weight:800;}
-.bad{color:#ff5252;font-weight:800;}
-
-@media(max-width:700px){
-  body{
-    padding:10px;
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-    gap:10px;
-  }
-
-  .result-top{
-    grid-template-columns:1fr;
-  }
-
-  .result-grid{
-    grid-template-columns:1fr;
-  }
-
-  .header h1{
-    font-size:22px;
-  }
-
-  .card, .result-card{
-    padding:12px;
-    border-radius:16px;
-  }
-
-  input, select{
-    padding:11px 11px;
-    font-size:15px;
-  }
-
-  button{
-    padding:13px;
-    font-size:16px;
-  }
-
-  .big-value{
-    font-size:26px;
-  }
-
-  .status-value{
-    font-size:22px;
-  }
-}
-</style>
+    .small-note {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 12px;
+      color: #777;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="app">
+    <h1>Calculateur d’autonomie</h1>
+    <p class="top">Estimation rapide pour trottinette électrique</p>
 
-<div class="app">
-
-  <div class="header">
-    <h1>Calculateur autonomie</h1>
-    <p>Estimation rapide avant un trajet</p>
-  </div>
-
-  <div class="grid">
-
-    <div class="card">
-      <div class="card-title">🔋 Batterie / Trott</div>
-
-      <div class="quick-buttons">
-        <button class="quick-btn" onclick="setBatteryPreset(52,20)">52V 20Ah</button>
-        <button class="quick-btn" onclick="setBatteryPreset(60,35)">60V 35Ah</button>
-        <button class="quick-btn" onclick="setBatteryPreset(72,40)">72V 40Ah</button>
-        <button class="quick-btn" onclick="setBatteryPreset(72,50)">72V 50Ah</button>
-      </div>
-
-      <label>Batterie (%)</label>
-      <div class="input-wrap">
-        <input type="number" id="battery" value="100" min="0" max="100">
-        <span class="unit">%</span>
-      </div>
-
-      <label>Poids (kg)</label>
-      <div class="input-wrap">
-        <input type="number" id="weight" value="90" min="1">
-        <span class="unit">kg</span>
-      </div>
-
-      <label>Volts (V)</label>
-      <div class="input-wrap">
-        <select id="volts" onchange="updateWh()">
-          <option value="36">36</option>
-          <option value="48">48</option>
-          <option value="52">52</option>
-          <option value="60" selected>60</option>
-          <option value="72">72</option>
-        </select>
-        <span class="unit">V</span>
-      </div>
-
-      <label>Ampérage (Ah)</label>
-      <div class="input-wrap">
-        <select id="ah" onchange="updateWh()">
-          <option value="15">15</option>
-          <option value="18">18</option>
-          <option value="20">20</option>
-          <option value="24">24</option>
-          <option value="28">28</option>
-          <option value="30">30</option>
-          <option value="35" selected>35</option>
-          <option value="40">40</option>
-          <option value="45">45</option>
-          <option value="50">50</option>
-        </select>
-        <span class="unit">Ah</span>
-      </div>
-
-      <label>Capacité batterie (Wh)</label>
-      <div class="input-wrap">
-        <input type="number" id="wh" class="readonly" readonly>
-        <span class="unit">Wh</span>
+    <div class="section">
+      <label>Voltage</label>
+      <div class="btn-group" id="voltageButtons">
+        <button class="choice-btn" onclick="selectValue('voltage', 52, this)">52V</button>
+        <button class="choice-btn" onclick="selectValue('voltage', 60, this)">60V</button>
+        <button class="choice-btn" onclick="selectValue('voltage', 72, this)">72V</button>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">🛣️ Trajet / Conduite</div>
+    <div class="section">
+      <label>Batterie (Ah)</label>
+      <div class="btn-group" id="batteryButtons">
+        <button class="choice-btn" onclick="selectValue('battery', 18, this)">18Ah</button>
+        <button class="choice-btn" onclick="selectValue('battery', 20, this)">20Ah</button>
+        <button class="choice-btn" onclick="selectValue('battery', 24, this)">24Ah</button>
+        <button class="choice-btn" onclick="selectValue('battery', 30, this)">30Ah</button>
+        <button class="choice-btn" onclick="selectValue('battery', 35, this)">35Ah</button>
+        <button class="choice-btn" onclick="selectValue('battery', 40, this)">40Ah</button>
+      </div>
+    </div>
 
+    <div class="section">
+      <label>Poids du pilote (kg)</label>
+      <div class="btn-group" id="weightButtons">
+        <button class="choice-btn" onclick="selectValue('weight', 60, this)">60 kg</button>
+        <button class="choice-btn" onclick="selectValue('weight', 75, this)">75 kg</button>
+        <button class="choice-btn" onclick="selectValue('weight', 90, this)">90 kg</button>
+        <button class="choice-btn" onclick="selectValue('weight', 110, this)">110 kg</button>
+      </div>
+    </div>
+
+    <div class="section">
       <label>Mode de conduite</label>
-      <div class="input-wrap">
-        <select id="mode">
-          <option value="14">Éco</option>
-          <option value="18" selected>Confort</option>
-          <option value="25">Escalade</option>
-        </select>
-      </div>
-
-      <label>Vitesse (km/h)</label>
-      <div class="input-wrap">
-        <select id="speed">
-          <option value="1.00">25</option>
-          <option value="1.08">35</option>
-          <option value="1.18" selected>45</option>
-          <option value="1.30">55</option>
-        </select>
-      </div>
-
-      <label>Distance aller (km)</label>
-      <div class="input-wrap">
-        <input type="number" id="distance" value="10" min="0" step="0.1">
-        <span class="unit">km</span>
-      </div>
-
-      <div class="actions">
-        <button onclick="calc()">Calculer</button>
+      <div class="btn-group" id="modeButtons">
+        <button class="choice-btn" onclick="selectMode('eco', this)">Eco</button>
+        <button class="choice-btn" onclick="selectMode('confort', this)">Confort</button>
+        <button class="choice-btn" onclick="selectMode('sport', this)">Sport</button>
       </div>
     </div>
 
-  </div>
-
-  <div class="result-card" id="resultCard">
-    <div class="result-title">📊 Résultat autonomie</div>
-
-    <div class="result-top">
-      <div class="big-box">
-        <div class="big-label">AUTONOMIE ESTIMÉE</div>
-        <div class="big-value" id="autonomieBig">-- km</div>
-      </div>
-
-      <div class="status-box">
-        <div class="status-label">STATUT</div>
-        <div class="status-value" id="statusBig">Clique sur calculer</div>
-      </div>
+    <div class="section">
+      <label>Vitesse moyenne estimée (km/h)</label>
+      <input type="number" id="speed" value="25" />
     </div>
 
-    <div class="result-grid">
-      <div class="metric">
-        <div class="metric-label">Batterie totale</div>
-        <div class="metric-value" id="metricWh">-- Wh</div>
-      </div>
+    <button class="main-btn" onclick="calculateRange()">Calculer</button>
 
-      <div class="metric">
-        <div class="metric-label">Énergie disponible</div>
-        <div class="metric-value" id="metricDispo">-- Wh</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-label">Consommation estimée</div>
-        <div class="metric-value" id="metricConso">-- Wh/km</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-label">Distance aller-retour</div>
-        <div class="metric-value" id="metricAR">-- km</div>
-      </div>
+    <div class="result" id="result">
+      Choisis les options puis appuie sur Calculer
     </div>
 
-    <div class="battery-bar-wrap">
-      <div class="battery-bar-label" id="batteryBarLabel">Batterie restante estimée</div>
-      <div class="battery-bar">
-        <div class="battery-fill" id="batteryFill"></div>
-      </div>
-    </div>
-
-    <div class="note" id="resultNote">
-      Estimation indicative basée sur des conditions moyennes avec marge de sécurité.
+    <div class="small-note">
+      Résultat indicatif, pouvant varier selon plusieurs conditions d’utilisation.
     </div>
   </div>
 
-</div>
+  <script>
+    let voltage = 0;
+    let battery = 0;
+    let weight = 0;
+    let mode = "";
 
-<script>
-function updateWh(){
-  let v = parseFloat(document.getElementById("volts").value);
-  let ah = parseFloat(document.getElementById("ah").value);
-  document.getElementById("wh").value = (v * ah).toFixed(0);
-}
+    function clearActiveButtons(containerId) {
+      const buttons = document.querySelectorAll(`#${containerId} .choice-btn`);
+      buttons.forEach(btn => btn.classList.remove("active"));
+    }
 
-function setBatteryPreset(v, ah){
-  document.getElementById("volts").value = v;
-  document.getElementById("ah").value = ah;
-  updateWh();
-}
+    function selectValue(type, value, button) {
+      if (type === "voltage") {
+        voltage = value;
+        clearActiveButtons("voltageButtons");
+      }
+      if (type === "battery") {
+        battery = value;
+        clearActiveButtons("batteryButtons");
+      }
+      if (type === "weight") {
+        weight = value;
+        clearActiveButtons("weightButtons");
+      }
+      button.classList.add("active");
+    }
 
-function getWeightFactor(weight){
-  if(weight <= 65) return 0.90;
-  if(weight <= 75) return 0.95;
-  if(weight <= 90) return 1.00;
-  if(weight <= 105) return 1.07;
-  if(weight <= 120) return 1.14;
-  return 1.22;
-}
+    function selectMode(selectedMode, button) {
+      mode = selectedMode;
+      clearActiveButtons("modeButtons");
+      button.classList.add("active");
 
-function setResultTheme(theme){
-  const card = document.getElementById("resultCard");
-  const fill = document.getElementById("batteryFill");
+      if (selectedMode === "eco") document.getElementById("speed").value = 20;
+      if (selectedMode === "confort") document.getElementById("speed").value = 30;
+      if (selectedMode === "sport") document.getElementById("speed").value = 45;
+    }
 
-  card.classList.remove("ok","warn","bad");
-  fill.classList.remove("warn","bad");
+    function calculateRange() {
+      const speed = parseFloat(document.getElementById("speed").value);
 
-  if(theme === "ok"){
-    card.classList.add("ok");
-  } else if(theme === "warn"){
-    card.classList.add("warn");
-    fill.classList.add("warn");
-  } else if(theme === "bad"){
-    card.classList.add("bad");
-    fill.classList.add("bad");
-  }
-}
+      if (!voltage || !battery || !weight || !mode || !speed) {
+        document.getElementById("result").innerHTML = "Merci de remplir toutes les options.";
+        return;
+      }
 
-function calc(){
+      const wh = voltage * battery;
 
-  let battery = parseFloat(document.getElementById("battery").value);
-  if(isNaN(battery)) battery = 0;
-  if(battery > 100) battery = 100;
-  if(battery < 0) battery = 0;
-  document.getElementById("battery").value = battery;
+      let whPerKm = 0;
 
-  let weight = parseFloat(document.getElementById("weight").value);
-  let wh = parseFloat(document.getElementById("wh").value);
-  let mode = parseFloat(document.getElementById("mode").value);
-  let speed = parseFloat(document.getElementById("speed").value);
-  let distance = parseFloat(document.getElementById("distance").value);
+      if (mode === "eco") whPerKm = 11;
+      if (mode === "confort") whPerKm = 16;
+      if (mode === "sport") whPerKm = 22;
 
-  if(
-    isNaN(weight) ||
-    isNaN(wh) ||
-    isNaN(mode) ||
-    isNaN(speed) ||
-    isNaN(distance)
-  ){
-    document.getElementById("autonomieBig").innerHTML = "-- km";
-    document.getElementById("statusBig").innerHTML = "Champs manquants";
-    document.getElementById("metricWh").innerHTML = "-- Wh";
-    document.getElementById("metricDispo").innerHTML = "-- Wh";
-    document.getElementById("metricConso").innerHTML = "-- Wh/km";
-    document.getElementById("metricAR").innerHTML = "-- km";
-    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée";
-    document.getElementById("batteryFill").style.width = "0%";
-    document.getElementById("resultNote").innerHTML = "Merci de remplir tous les champs.";
-    setResultTheme("bad");
-    return;
-  }
+      // Ajustement léger selon poids
+      if (weight <= 65) whPerKm -= 1;
+      else if (weight >= 95) whPerKm += 2;
 
-  let dispo = wh * (battery / 100);
-  let weightFactor = getWeightFactor(weight);
+      // Ajustement léger selon vitesse
+      if (speed >= 45) whPerKm += 2;
+      else if (speed <= 20) whPerKm -= 1;
 
-  let consoBase = mode * speed * weightFactor;
-  let conso = consoBase * 1.12;
+      const range = wh / whPerKm;
+      const safeRange = range * 0.88;
 
-  let autonomie = dispo / conso;
-  let allerRetour = distance * 2;
-
-  document.getElementById("autonomieBig").innerHTML = autonomie.toFixed(1) + " km";
-  document.getElementById("metricWh").innerHTML = wh.toFixed(0) + " Wh";
-  document.getElementById("metricDispo").innerHTML = dispo.toFixed(0) + " Wh";
-  document.getElementById("metricConso").innerHTML = conso.toFixed(1) + " Wh/km";
-  document.getElementById("metricAR").innerHTML = allerRetour.toFixed(1) + " km";
-
-  if(autonomie >= allerRetour){
-    let resteWh = dispo - (allerRetour * conso);
-    let restePct = (resteWh / wh) * 100;
-    if(restePct < 0) restePct = 0;
-
-    document.getElementById("statusBig").innerHTML = "<span class='good'>Aller-retour OK</span>";
-    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée : " + restePct.toFixed(0) + " %";
-    document.getElementById("batteryFill").style.width = restePct.toFixed(0) + "%";
-    document.getElementById("resultNote").innerHTML = "Trajet faisable avec marge restante estimée.";
-    setResultTheme("ok");
-  }
-  else if(autonomie >= distance){
-    let resteWh = dispo - (distance * conso);
-    let restePct = (resteWh / wh) * 100;
-    if(restePct < 0) restePct = 0;
-
-    document.getElementById("statusBig").innerHTML = "<span class='warn'>Aller OK / retour limite</span>";
-    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée à l'arrivée : " + restePct.toFixed(0) + " %";
-    document.getElementById("batteryFill").style.width = restePct.toFixed(0) + "%";
-    document.getElementById("resultNote").innerHTML = "Conseil : réduire la vitesse ou le mode pour sécuriser le retour.";
-    setResultTheme("warn");
-  }
-  else{
-    document.getElementById("statusBig").innerHTML = "<span class='bad'>Trajet impossible</span>";
-    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée";
-    document.getElementById("batteryFill").style.width = "0%";
-    document.getElementById("resultNote").innerHTML = "L’autonomie estimée ne permet pas de réaliser ce trajet en sécurité.";
-    setResultTheme("bad");
-  }
-}
-
-updateWh();
-</script>
-
+      document.getElementById("result").innerHTML =
+        `Autonomie estimée : <br><span style="font-size:28px;">${safeRange.toFixed(1)} km</span>`;
+    }
+  </script>
 </body>
 </html>
