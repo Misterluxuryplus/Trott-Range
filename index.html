@@ -1,137 +1,140 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Test compact</title>
-
-<style>
-body {
-  background:#111;
-  color:white;
-  font-family:Arial;
-  padding:10px;
-  margin:0;
-}
-
-h1 {
-  text-align:center;
-  color:#00e676;
-  margin:5px 0 15px;
-  font-size:24px;
-}
-
-/* GRID */
-.grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-/* BLOCS */
-.box {
-  background:#1c1c1c;
-  padding:12px;
-  border-radius:8px;
-}
-
-/* INPUTS */
-label {
-  font-size:13px;
-  margin-bottom:4px;
-  display:block;
-}
-
-input, select {
-  width:100%;
-  padding:8px;
-  font-size:14px;
-  border-radius:6px;
-  border:none;
-}
-
-/* RESULTAT */
-.result {
-  margin-top:10px;
-  background:#1c1c1c;
-  padding:12px;
-  border-radius:8px;
-  text-align:center;
-  font-size:14px;
-}
-
-/* BOUTON */
-button {
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-  background:#00e676;
-  border:none;
-  font-weight:bold;
-  border-radius:8px;
-  cursor:pointer;
-  font-size:14px;
-}
-
-/* MOBILE */
-@media(max-width:700px){
-  .grid{
-    grid-template-columns:1fr;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculateur autonomie</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    h1 {
+      color: #00e676;
+      margin-bottom: 20px;
+    }
+    .box {
+      max-width: 520px;
+      margin: 20px auto;
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 12px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 16px;
+      box-sizing: border-box;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      background: #00e676;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 12px;
+      line-height: 1.8;
+    }
+  </style>
 </head>
-
 <body>
-
-<h1>Calculateur autonomie</h1>
-
-<div class="grid">
+  <h1>Calculateur autonomie</h1>
 
   <div class="box">
-    <label>Batterie (%)</label>
-    <input type="number" value="100">
-
-    <label>Poids (kg)</label>
-    <input type="number" value="107">
-
-    <label>Volts</label>
-    <select>
-      <option>60</option>
-      <option>72</option>
+    <input type="number" id="battery" value="100" min="0" max="100" placeholder="Batterie %">
+    <input type="number" id="weight" value="107" min="1" placeholder="Poids kg">
+    <select id="volts">
+      <option value="36">36 V</option>
+      <option value="48">48 V</option>
+      <option value="52">52 V</option>
+      <option value="60" selected>60 V</option>
+      <option value="72">72 V</option>
     </select>
-
-    <label>Ampérage</label>
-    <select>
-      <option>35</option>
-      <option>40</option>
+    <select id="ah">
+      <option value="15">15 Ah</option>
+      <option value="18">18 Ah</option>
+      <option value="20">20 Ah</option>
+      <option value="24">24 Ah</option>
+      <option value="28">28 Ah</option>
+      <option value="30">30 Ah</option>
+      <option value="35" selected>35 Ah</option>
+      <option value="40">40 Ah</option>
+      <option value="45">45 Ah</option>
+      <option value="50">50 Ah</option>
     </select>
+    <select id="mode">
+      <option value="22">Eco</option>
+      <option value="30" selected>Confort</option>
+            <option value="52">Escalade</option>
+    </select>
+    <select id="speed">
+      <option value="1">25 km/h</option>
+      <option value="1.1">35 km/h</option>
+      <option value="1.2" selected>45 km/h</option>
+      <option value="1.35">55 km/h</option>
+    </select>
+    <input type="number" id="distance" value="10" min="0" step="0.1" placeholder="Distance aller km">
+    <button onclick="calc()">Calculer</button>
+    <div id="result">Clique sur calculer</div>
   </div>
 
-  <div class="box">
-    <label>Mode</label>
-    <select>
-      <option>Éco</option>
-      <option>Confort</option>
-      <option>Sport</option>
-    </select>
+  <script>
+    function calc() {
+      let battery = parseFloat(document.getElementById('battery').value);
+      let weight = parseFloat(document.getElementById('weight').value);
+      let volts = parseFloat(document.getElementById('volts').value);
+      let ah = parseFloat(document.getElementById('ah').value);
+      let mode = parseFloat(document.getElementById('mode').value);
+      let speed = parseFloat(document.getElementById('speed').value);
+      let distance = parseFloat(document.getElementById('distance').value);
 
-    <label>Vitesse</label>
-    <select>
-      <option>25 km/h</option>
-      <option>45 km/h</option>
-    </select>
+      if (isNaN(battery) || isNaN(weight) || isNaN(volts) || isNaN(ah) || isNaN(mode) || isNaN(speed) || isNaN(distance)) {
+        document.getElementById('result').innerHTML = 'Merci de remplir tous les champs';
+        return;
+      }
 
-    <label>Distance</label>
-    <input type="number" value="10">
+      if (battery > 100) battery = 100;
+      if (battery < 0) battery = 0;
+      document.getElementById('battery').value = battery;
 
-    <button>Calculer</button>
-  </div>
+      const wh = volts * ah;
+      const dispo = wh * (battery / 100);
+      let weightFactor = 1;
+      if (weight > 100) weightFactor = 1.1;
+      const conso = mode * speed * weightFactor;
+      const autonomie = dispo / conso;
+      const ar = distance * 2;
 
-</div>
+      let txt = '';
+      txt += '🔋 Batterie totale : ' + wh.toFixed(0) + ' Wh<br>';
+      txt += '⚡ Énergie disponible : ' + dispo.toFixed(0) + ' Wh<br>';
+      txt += '⚙️ Consommation estimée : ' + conso.toFixed(1) + ' Wh/km<br>';
+      txt += '🛴 Autonomie estimée : ' + autonomie.toFixed(1) + ' km<br>';
+      txt += '📏 Distance aller : ' + distance.toFixed(1) + ' km<br>';
+      txt += '🔁 Aller-retour : ' + ar.toFixed(1) + ' km<br><br>';
 
-<div class="result">
-Résultat autonomie ici
-</div>
+      if (autonomie >= ar) {
+        txt += '<span style="color:#00e676;font-weight:bold;">✅ Aller : OUI</span><br>';
+        txt += '<span style="color:#00e676;font-weight:bold;">✅ Aller-retour : OUI</span><br>';
+        txt += '📉 Marge restante : ' + (autonomie - ar).toFixed(1) + ' km';
+      } else if (autonomie >= distance) {
+        txt += '<span style="color:#00e676;font-weight:bold;">✅ Aller : OUI</span><br>';
+        txt += '<span style="color:orange;font-weight:bold;">⚠️ Aller-retour : NON</span><br>';
+        txt += '👉 Conseil : baisse la vitesse ou le mode pour assurer le retour';
+      } else {
+        txt += '<span style="color:#ff4d4d;font-weight:bold;">❌ Trajet impossible</span>';
+      }
 
+      document.getElementById('result').innerHTML = txt;
+    }
+  </script>
 </body>
 </html>
