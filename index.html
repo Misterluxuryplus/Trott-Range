@@ -2,78 +2,71 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Compact V2</title>
+<title>Calculateur autonomie</title>
 
 <style>
-body {
+body{
   background:#111;
   color:white;
   font-family:Arial;
   margin:0;
-  padding:6px;
+  padding:8px;
 }
 
-h1 {
+h1{
   text-align:center;
   color:#00e676;
-  font-size:18px;
+  font-size:20px;
   margin:5px 0;
 }
 
-/* GRID */
-.grid {
+.grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:6px;
+  gap:8px;
 }
 
-/* BLOCS */
-.box {
+.box{
   background:#1c1c1c;
-  padding:6px;
-  border-radius:6px;
+  padding:8px;
+  border-radius:8px;
 }
 
-/* INPUT */
-label {
-  font-size:11px;
-  margin-top:4px;
-  display:block;
-}
-
-input, select {
-  width:100%;
-  padding:5px;
+label{
   font-size:12px;
-  border:none;
-  border-radius:4px;
-  margin-top:2px;
 }
 
-/* BOUTON */
-button {
+input, select{
   width:100%;
   padding:6px;
-  margin-top:6px;
+  font-size:13px;
+  border:none;
+  border-radius:5px;
+  margin-bottom:6px;
+}
+
+button{
+  width:100%;
+  padding:8px;
   background:#00e676;
   border:none;
-  font-size:12px;
-  border-radius:6px;
+  border-radius:8px;
   font-weight:bold;
 }
 
-/* RESULTAT */
-.result {
-  margin-top:6px;
+.result{
+  margin-top:8px;
   background:#1c1c1c;
-  padding:8px;
-  border-radius:6px;
-  font-size:12px;
-  text-align:center;
+  padding:10px;
+  border-radius:8px;
+  font-size:13px;
 }
 
-/* MOBILE */
-@media(max-width:600px){
+.good{color:#00e676;}
+.warn{color:orange;}
+.bad{color:red;}
+
+@media(max-width:700px){
   .grid{
     grid-template-columns:1fr;
   }
@@ -87,38 +80,115 @@ button {
 
 <div class="grid">
 
-  <div class="box">
-    <label>Batterie</label>
-    <input type="number" value="100">
+<div class="box">
+<label>Batterie (%)</label>
+<input type="number" id="battery" value="100" max="100" min="0">
 
-    <label>Poids</label>
-    <input type="number" value="107">
+<label>Poids</label>
+<input type="number" id="weight" value="107">
 
-    <label>Volts</label>
-    <select><option>60</option><option>72</option></select>
+<label>Volts</label>
+<select id="volts" onchange="updateWh()">
+<option value="36">36</option>
+<option value="48">48</option>
+<option value="52">52</option>
+<option value="60" selected>60</option>
+<option value="72">72</option>
+</select>
 
-    <label>Ah</label>
-    <select><option>35</option><option>40</option></select>
-  </div>
+<label>Ampérage</label>
+<select id="ah" onchange="updateWh()">
+<option value="15">15</option>
+<option value="18">18</option>
+<option value="20">20</option>
+<option value="24">24</option>
+<option value="28">28</option>
+<option value="30">30</option>
+<option value="35" selected>35</option>
+<option value="40">40</option>
+<option value="45">45</option>
+<option value="50">50</option>
+</select>
 
-  <div class="box">
-    <label>Mode</label>
-    <select><option>Eco</option><option>Confort</option></select>
+<label>Wh (auto)</label>
+<input type="number" id="wh" readonly>
+</div>
 
-    <label>Vitesse</label>
-    <select><option>25</option><option>45</option></select>
+<div class="box">
+<label>Mode</label>
+<select id="mode">
+<option value="22">Eco</option>
+<option value="30" selected>Confort</option>
+<option value="40">Sport</option>
+<option value="52">Escalade</option>
+</select>
 
-    <label>Distance</label>
-    <input type="number" value="10">
+<label>Vitesse</label>
+<select id="speed">
+<option value="1">25 km/h</option>
+<option value="1.1">35 km/h</option>
+<option value="1.2" selected>45 km/h</option>
+<option value="1.35">55 km/h</option>
+</select>
 
-    <button>OK</button>
-  </div>
+<label>Distance aller</label>
+<input type="number" id="distance" value="10">
+
+<button onclick="calc()">Calculer</button>
+</div>
 
 </div>
 
-<div class="result">
-Résultat ici
+<div class="result" id="result">
+Clique sur calculer
 </div>
+
+<script>
+function updateWh(){
+  let v = parseFloat(document.getElementById("volts").value);
+  let ah = parseFloat(document.getElementById("ah").value);
+  document.getElementById("wh").value = (v*ah).toFixed(0);
+}
+
+function calc(){
+
+  let battery = parseFloat(document.getElementById("battery").value);
+  if(battery>100) battery=100;
+  if(battery<0) battery=0;
+
+  let weight = parseFloat(document.getElementById("weight").value);
+  let wh = parseFloat(document.getElementById("wh").value);
+  let mode = parseFloat(document.getElementById("mode").value);
+  let speed = parseFloat(document.getElementById("speed").value);
+  let distance = parseFloat(document.getElementById("distance").value);
+
+  let dispo = wh*(battery/100);
+
+  let weightFactor = 1;
+  if(weight>100) weightFactor=1.1;
+
+  let conso = mode * weightFactor * speed;
+
+  let autonomie = dispo / conso;
+  let ar = distance*2;
+
+  let txt = "";
+
+  txt += "Autonomie : "+autonomie.toFixed(1)+" km<br>";
+
+  if(autonomie >= ar){
+    txt += "<span class='good'>Aller-retour OK</span>";
+  }else if(autonomie >= distance){
+    txt += "<span class='warn'>Aller OK / retour limite</span>";
+  }else{
+    txt += "<span class='bad'>Trajet impossible</span>";
+  }
+
+  document.getElementById("result").innerHTML = txt;
+}
+
+updateWh();
+</script>
 
 </body>
 </html>
