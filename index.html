@@ -6,90 +6,198 @@
 <title>Calculateur autonomie</title>
 
 <style>
+*{
+  box-sizing:border-box;
+}
+
 body{
-  background:#111;
-  color:white;
-  font-family:Arial;
   margin:0;
-  padding:10px;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(180deg,#0d0d0d 0%, #141414 100%);
+  color:white;
+  padding:12px;
 }
 
-h1{
+.app{
+  max-width:900px;
+  margin:0 auto;
+}
+
+.header{
   text-align:center;
-  color:#00e676;
-  font-size:22px;
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
 
-/* GRID */
+.header h1{
+  margin:0;
+  color:#00e676;
+  font-size:24px;
+  font-weight:800;
+}
+
+.header p{
+  margin:6px 0 0;
+  color:#bdbdbd;
+  font-size:13px;
+}
+
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:12px;
 }
 
-/* BOX */
-.box{
-  background:#1c1c1c;
-  padding:12px;
-  border-radius:10px;
+.card{
+  background:rgba(28,28,28,0.95);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.25);
 }
 
-/* TEXTE */
+.card-title{
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:10px;
+  color:#ffffff;
+}
+
 label{
-  font-size:14px;
-  font-weight:bold;
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  color:#e6e6e6;
+  margin:8px 0 5px;
 }
 
-/* INPUT */
+.input-wrap{
+  position:relative;
+}
+
 input, select{
   width:100%;
-  padding:10px;
+  padding:12px 12px;
   font-size:15px;
   border:none;
-  border-radius:8px;
-  margin-bottom:8px;
+  border-radius:12px;
+  outline:none;
+  background:#f5f5f5;
+  color:#111;
 }
 
-/* BOUTON */
+.readonly{
+  background:#dfe8df !important;
+  font-weight:700;
+}
+
+.unit{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#444;
+  font-size:12px;
+  font-weight:700;
+  pointer-events:none;
+  background:#eaeaea;
+  padding:3px 7px;
+  border-radius:8px;
+}
+
+.actions{
+  margin-top:12px;
+}
+
 button{
   width:100%;
-  padding:12px;
-  background:#00e676;
+  padding:14px;
   border:none;
-  border-radius:10px;
+  border-radius:14px;
+  background:linear-gradient(180deg,#00f07a 0%, #00d966 100%);
+  color:#0e0e0e;
   font-size:16px;
-  font-weight:bold;
+  font-weight:800;
   cursor:pointer;
-  transition:0.2s;
+  box-shadow:0 6px 16px rgba(0,230,118,0.25);
 }
 
-button:hover{
-  background:#00c853;
+button:active{
+  transform:scale(0.99);
 }
 
-/* RESULTAT */
-.result{
-  margin-top:10px;
-  background:#1c1c1c;
-  padding:12px;
-  border-radius:10px;
-  font-size:15px;
-  line-height:1.6;
+.result-card{
+  margin-top:12px;
+  background:rgba(28,28,28,0.98);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.25);
 }
 
-.highlight{
+.result-title{
   font-size:18px;
-  font-weight:bold;
+  font-weight:800;
+  color:#00e676;
+  margin-bottom:12px;
 }
 
-.good{color:#00e676;}
-.warn{color:orange;}
-.bad{color:red;}
+.result-line{
+  font-size:15px;
+  line-height:1.7;
+  margin-bottom:2px;
+}
+
+.big{
+  font-size:19px;
+  font-weight:800;
+}
+
+.good{color:#00e676;font-weight:800;}
+.warn{color:#ffb300;font-weight:800;}
+.bad{color:#ff5252;font-weight:800;}
+
+.note{
+  margin-top:12px;
+  font-size:12px;
+  color:#a8a8a8;
+  line-height:1.5;
+}
 
 @media(max-width:700px){
+  body{
+    padding:10px;
+  }
+
   .grid{
     grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .header h1{
+    font-size:22px;
+  }
+
+  .card, .result-card{
+    padding:12px;
+    border-radius:16px;
+  }
+
+  input, select{
+    padding:11px 11px;
+    font-size:15px;
+  }
+
+  button{
+    padding:13px;
+    font-size:16px;
+  }
+
+  .result-line{
+    font-size:14px;
+  }
+
+  .big{
+    font-size:18px;
   }
 }
 </style>
@@ -97,74 +205,112 @@ button:hover{
 
 <body>
 
-<h1>Calculateur autonomie</h1>
+<div class="app">
 
-<div class="grid">
+  <div class="header">
+    <h1>Calculateur autonomie</h1>
+    <p>Estimation rapide avant un trajet</p>
+  </div>
 
-<div class="box">
-<label>Batterie (%)</label>
-<input type="number" id="battery" value="100" max="100" min="0">
+  <div class="grid">
 
-<label>Poids (kg)</label>
-<input type="number" id="weight" value="90">
+    <div class="card">
+      <div class="card-title">🔋 Batterie / Trott</div>
 
-<label>Volts (V)</label>
-<select id="volts" onchange="updateWh()">
-<option value="36">36</option>
-<option value="48">48</option>
-<option value="52">52</option>
-<option value="60" selected>60</option>
-<option value="72">72</option>
-</select>
+      <label>Batterie (%)</label>
+      <div class="input-wrap">
+        <input type="number" id="battery" value="100" min="0" max="100">
+        <span class="unit">%</span>
+      </div>
 
-<label>Ampérage (Ah)</label>
-<select id="ah" onchange="updateWh()">
-<option value="15">15</option>
-<option value="18">18</option>
-<option value="20">20</option>
-<option value="24">24</option>
-<option value="28">28</option>
-<option value="30">30</option>
-<option value="35" selected>35</option>
-<option value="40">40</option>
-<option value="45">45</option>
-<option value="50">50</option>
-</select>
+      <label>Poids (kg)</label>
+      <div class="input-wrap">
+        <input type="number" id="weight" value="90" min="1">
+        <span class="unit">kg</span>
+      </div>
 
-<label>Capacité batterie (Wh)</label>
-<input type="number" id="wh" readonly>
-</div>
+      <label>Volts (V)</label>
+      <div class="input-wrap">
+        <select id="volts" onchange="updateWh()">
+          <option value="36">36</option>
+          <option value="48">48</option>
+          <option value="52">52</option>
+          <option value="60" selected>60</option>
+          <option value="72">72</option>
+        </select>
+        <span class="unit">V</span>
+      </div>
 
-<div class="box">
-<label>Mode de conduite</label>
-<select id="mode">
-<option value="14">Éco</option>
-<option value="18" selected>Confort</option>
-<option value="25">Escalade</option>
-</select>
+      <label>Ampérage (Ah)</label>
+      <div class="input-wrap">
+        <select id="ah" onchange="updateWh()">
+          <option value="15">15</option>
+          <option value="18">18</option>
+          <option value="20">20</option>
+          <option value="24">24</option>
+          <option value="28">28</option>
+          <option value="30">30</option>
+          <option value="35" selected>35</option>
+          <option value="40">40</option>
+          <option value="45">45</option>
+          <option value="50">50</option>
+        </select>
+        <span class="unit">Ah</span>
+      </div>
 
-<label>Vitesse (km/h)</label>
-<select id="speed">
-<option value="1.00">25</option>
-<option value="1.08">35</option>
-<option value="1.18" selected>45</option>
-<option value="1.30">55</option>
-</select>
+      <label>Capacité batterie (Wh)</label>
+      <div class="input-wrap">
+        <input type="number" id="wh" class="readonly" readonly>
+        <span class="unit">Wh</span>
+      </div>
+    </div>
 
-<label>Distance aller (km)</label>
-<input type="number" id="distance" value="10" min="0" step="0.1">
+    <div class="card">
+      <div class="card-title">🛣️ Trajet / Conduite</div>
 
-<button onclick="calc()">Calculer</button>
-</div>
+      <label>Mode de conduite</label>
+      <div class="input-wrap">
+        <select id="mode">
+          <option value="14">Éco</option>
+          <option value="18" selected>Confort</option>
+          <option value="25">Escalade</option>
+        </select>
+      </div>
 
-</div>
+      <label>Vitesse (km/h)</label>
+      <div class="input-wrap">
+        <select id="speed">
+          <option value="1.00">25</option>
+          <option value="1.08">35</option>
+          <option value="1.18" selected>45</option>
+          <option value="1.30">55</option>
+        </select>
+      </div>
 
-<div class="result" id="result">
-Clique sur calculer
+      <label>Distance aller (km)</label>
+      <div class="input-wrap">
+        <input type="number" id="distance" value="10" min="0" step="0.1">
+        <span class="unit">km</span>
+      </div>
+
+      <div class="actions">
+        <button onclick="calc()">Calculer</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="result-card">
+    <div class="result-title">📊 Résultat autonomie</div>
+    <div id="result">Clique sur calculer</div>
+    <div class="note">
+      Estimation indicative basée sur des conditions moyennes avec marge de sécurité.
+    </div>
+  </div>
+
 </div>
 
 <script>
-
 function updateWh(){
   let v = parseFloat(document.getElementById("volts").value);
   let ah = parseFloat(document.getElementById("ah").value);
@@ -183,6 +329,7 @@ function getWeightFactor(weight){
 function calc(){
 
   let battery = parseFloat(document.getElementById("battery").value);
+  if(isNaN(battery)) battery = 0;
   if(battery > 100) battery = 100;
   if(battery < 0) battery = 0;
   document.getElementById("battery").value = battery;
@@ -193,45 +340,57 @@ function calc(){
   let speed = parseFloat(document.getElementById("speed").value);
   let distance = parseFloat(document.getElementById("distance").value);
 
-  let dispo = wh * (battery / 100);
+  if(
+    isNaN(weight) ||
+    isNaN(wh) ||
+    isNaN(mode) ||
+    isNaN(speed) ||
+    isNaN(distance)
+  ){
+    document.getElementById("result").innerHTML = "Merci de remplir tous les champs.";
+    return;
+  }
 
+  let dispo = wh * (battery / 100);
   let weightFactor = getWeightFactor(weight);
-  let conso = mode * speed * weightFactor * 1.12;
+
+  // Calcul public réaliste + prudent
+  let consoBase = mode * speed * weightFactor;
+  let conso = consoBase * 1.12;
 
   let autonomie = dispo / conso;
-  let ar = distance * 2;
+  let allerRetour = distance * 2;
 
   let txt = "";
-  txt += "🔋 Batterie : " + wh.toFixed(0) + " Wh<br>";
-  txt += "⚡ Énergie dispo : " + dispo.toFixed(0) + " Wh<br>";
-  txt += "⚙️ Conso : " + conso.toFixed(1) + " Wh/km<br>";
-  txt += "<span class='highlight'>🛴 Autonomie : " + autonomie.toFixed(1) + " km</span><br>";
-  txt += "📏 Aller : " + distance.toFixed(1) + " km<br>";
-  txt += "🔁 Aller-retour : " + ar.toFixed(1) + " km<br><br>";
+  txt += "<div class='result-line'>🔋 <b>Batterie :</b> " + wh.toFixed(0) + " Wh</div>";
+  txt += "<div class='result-line'>⚡ <b>Énergie dispo :</b> " + dispo.toFixed(0) + " Wh</div>";
+  txt += "<div class='result-line'>⚙️ <b>Conso estimée :</b> " + conso.toFixed(1) + " Wh/km</div>";
+  txt += "<div class='result-line big'>🛴 Autonomie estimée : " + autonomie.toFixed(1) + " km</div>";
+  txt += "<div class='result-line'>📏 <b>Aller :</b> " + distance.toFixed(1) + " km</div>";
+  txt += "<div class='result-line'>🔁 <b>Aller-retour :</b> " + allerRetour.toFixed(1) + " km</div><br>";
 
-  if(autonomie >= ar){
-    let reste = dispo - (ar * conso);
-    let pct = (reste / wh) * 100;
-    txt += "<span class='good highlight'>✅ Aller-retour OK</span><br>";
-    txt += "🔋 Batterie restante : " + pct.toFixed(0) + " %";
+  if(autonomie >= allerRetour){
+    let resteWh = dispo - (allerRetour * conso);
+    let restePct = (resteWh / wh) * 100;
+
+    txt += "<div class='result-line big good'>✅ Aller-retour OK</div>";
+    txt += "<div class='result-line'>🔋 <b>Batterie restante estimée :</b> " + restePct.toFixed(0) + " %</div>";
   }
   else if(autonomie >= distance){
-    let reste = dispo - (distance * conso);
-    let pct = (reste / wh) * 100;
-    txt += "<span class='warn highlight'>⚠️ Aller OK / retour limite</span><br>";
-    txt += "🔋 Batterie restante : " + pct.toFixed(0) + " %";
+    let resteWh = dispo - (distance * conso);
+    let restePct = (resteWh / wh) * 100;
+
+    txt += "<div class='result-line big warn'>⚠️ Aller OK / retour limite</div>";
+    txt += "<div class='result-line'>🔋 <b>Batterie restante à l'arrivée :</b> " + restePct.toFixed(0) + " %</div>";
   }
   else{
-    txt += "<span class='bad highlight'>❌ Trajet impossible</span>";
+    txt += "<div class='result-line big bad'>❌ Trajet impossible</div>";
   }
-
-  txt += "<br><br><span style='font-size:12px;color:#aaa;'>Estimation indicative basée sur des conditions moyennes avec marge de sécurité.</span>";
 
   document.getElementById("result").innerHTML = txt;
 }
 
 updateWh();
-
 </script>
 
 </body>
