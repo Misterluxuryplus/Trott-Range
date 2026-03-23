@@ -92,7 +92,7 @@ button{
 <input type="number" id="battery" value="100" max="100" min="0">
 
 <label>Poids (kg)</label>
-<input type="number" id="weight" value="100">
+<input type="number" id="weight" value="90">
 
 <label>Volts (V)</label>
 <select id="volts" onchange="updateWh()">
@@ -124,21 +124,21 @@ button{
 <div class="box">
 <label>Mode de conduite</label>
 <select id="mode">
-<option value="16">Éco</option>
-<option value="22" selected>Confort</option>
-<option value="32">Escalade</option>
+<option value="14">Éco</option>
+<option value="18" selected>Confort</option>
+<option value="25">Escalade</option>
 </select>
 
 <label>Vitesse (km/h)</label>
 <select id="speed">
-<option value="1">25</option>
-<option value="1.1">35</option>
-<option value="1.2" selected>45</option>
-<option value="1.35">55</option>
+<option value="1.00">25</option>
+<option value="1.08">35</option>
+<option value="1.18" selected>45</option>
+<option value="1.30">55</option>
 </select>
 
 <label>Distance aller (km)</label>
-<input type="number" id="distance" value="10">
+<input type="number" id="distance" value="10" min="0" step="0.1">
 
 <button onclick="calc()">Calculer</button>
 </div>
@@ -150,18 +150,27 @@ Clique sur calculer
 </div>
 
 <script>
-
 function updateWh(){
   let v = parseFloat(document.getElementById("volts").value);
   let ah = parseFloat(document.getElementById("ah").value);
-  document.getElementById("wh").value = (v*ah).toFixed(0);
+  document.getElementById("wh").value = (v * ah).toFixed(0);
+}
+
+function getWeightFactor(weight){
+  if(weight <= 65) return 0.90;
+  if(weight <= 75) return 0.95;
+  if(weight <= 90) return 1.00;
+  if(weight <= 105) return 1.07;
+  if(weight <= 120) return 1.14;
+  return 1.22;
 }
 
 function calc(){
 
   let battery = parseFloat(document.getElementById("battery").value);
-  if(battery>100) battery=100;
-  if(battery<0) battery=0;
+  if(isNaN(battery)) battery = 0;
+  if(battery > 100) battery = 100;
+  if(battery < 0) battery = 0;
   document.getElementById("battery").value = battery;
 
   let weight = parseFloat(document.getElementById("weight").value);
@@ -170,58 +179,63 @@ function calc(){
   let speed = parseFloat(document.getElementById("speed").value);
   let distance = parseFloat(document.getElementById("distance").value);
 
-  let dispo = wh*(battery/100);
+  if(
+    isNaN(weight) ||
+    isNaN(wh) ||
+    isNaN(mode) ||
+    isNaN(speed) ||
+    isNaN(distance)
+  ){
+    document.getElementById("result").innerHTML = "Merci de remplir tous les champs.";
+    return;
+  }
 
-  // ajustement poids réaliste
-  let weightFactor = 1;
-  if(weight<=75) weightFactor=0.92;
-  else if(weight<=90) weightFactor=0.98;
-  else if(weight<=105) weightFactor=1.05;
-  else if(weight<=120) weightFactor=1.12;
-  else weightFactor=1.20;
+  let dispo = wh * (battery / 100);
 
-  // conso avec sécurité
-  let conso = mode * speed * weightFactor * 1.10;
+  // facteur poids progressif
+  let weightFactor = getWeightFactor(weight);
 
-  let autonomie = dispo / conso;
-  let ar = distance*2;
+  // consommation réelle estimée
+  let consoBase = mode * speed * weightFactor;
+
+  // marge de sécurité publique : +12%
+  let consoSecurisee = consoBase * 1.12;
+
+  let autonomie = dispo / consoSecurisee;
+  let allerRetour = distance * 2;
 
   let txt = "";
+  txt += "🔋 Batterie : " + wh.toFixed(0) + " Wh<br>";
+  txt += "⚡ Énergie dispo : " + dispo.toFixed(0) + " Wh<br>";
+  txt += "⚙️ Conso estimée : " + consoSecurisee.toFixed(1) + " Wh/km<br>";
+  txt += "<span class='highlight'>🛴 Autonomie estimée : " + autonomie.toFixed(1) + " km</span><br>";
+  txt += "📏 Aller : " + distance.toFixed(1) + " km<br>";
+  txt += "🔁 Aller-retour : " + allerRetour.toFixed(1) + " km<br><br>";
 
-  txt += "🔋 Batterie : "+wh.toFixed(0)+" Wh<br>";
-  txt += "⚡ Énergie dispo : "+dispo.toFixed(0)+" Wh<br>";
-  txt += "⚙️ Conso : "+conso.toFixed(1)+" Wh/km<br>";
-  txt += "<span class='highlight'>🛴 Autonomie : "+autonomie.toFixed(1)+" km</span><br>";
-  txt += "📏 Aller : "+distance+" km<br>";
-  txt += "🔁 Aller-retour : "+ar+" km<br><br>";
-
-  if(autonomie >= ar){
-    let reste = dispo - (ar*conso);
-    let pourcent = (reste/wh)*100;
+  if(autonomie >= allerRetour){
+    let resteWh = dispo - (allerRetour * consoSecurisee);
+    let restePct = (resteWh / wh) * 100;
 
     txt += "<span class='good highlight'>✅ Aller-retour OK</span><br>";
-    txt += "🔋 Batterie restante : "+pourcent.toFixed(0)+" %";
+    txt += "🔋 Batterie restante estimée : " + restePct.toFixed(0) + " %";
   }
-
   else if(autonomie >= distance){
-    let reste = dispo - (distance*conso);
-    let pourcent = (reste/wh)*100;
+    let resteWh = dispo - (distance * consoSecurisee);
+    let restePct = (resteWh / wh) * 100;
 
     txt += "<span class='warn highlight'>⚠️ Aller OK / retour limite</span><br>";
-    txt += "🔋 Batterie restante à l'arrivée : "+pourcent.toFixed(0)+" %";
+    txt += "🔋 Batterie restante à l'arrivée : " + restePct.toFixed(0) + " %";
   }
-
   else{
     txt += "<span class='bad highlight'>❌ Trajet impossible</span>";
   }
 
-  txt += "<br><br><span style='font-size:11px;color:#aaa;'>Estimation indicative basée sur des conditions moyennes. Les résultats peuvent varier selon le terrain, la température et le style de conduite.</span>";
+  txt += "<br><br><span style='font-size:11px;color:#aaa;'>Estimation indicative basée sur des conditions moyennes avec une marge de sécurité intégrée. Les résultats peuvent varier selon le terrain, la température, la pression des pneus et le style de conduite.</span>";
 
   document.getElementById("result").innerHTML = txt;
 }
 
 updateWh();
-
 </script>
 
 </body>
