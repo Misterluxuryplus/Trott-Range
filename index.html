@@ -107,11 +107,21 @@
 
       const wh = volts * ah;
       const dispo = wh * (battery / 100);
+
+      // Réglage de conso plus précis
       let weightFactor = 1;
-      if (weight > 100) weightFactor = 1.1;
+      if (weight <= 75) weightFactor = 0.92;
+      else if (weight <= 90) weightFactor = 0.98;
+      else if (weight <= 105) weightFactor = 1.05;
+      else if (weight <= 120) weightFactor = 1.12;
+      else weightFactor = 1.20;
+
       const conso = mode * speed * weightFactor;
       const autonomie = dispo / conso;
       const ar = distance * 2;
+      const whRestants = dispo - (distance * conso * 2);
+      let pourcentRestant = (whRestants / wh) * 100;
+      if (pourcentRestant < 0) pourcentRestant = 0;
 
       let txt = '';
       txt += '🔋 Batterie totale : ' + wh.toFixed(0) + ' Wh<br>';
@@ -124,10 +134,16 @@
       if (autonomie >= ar) {
         txt += '<span style="color:#00e676;font-weight:bold;">✅ Aller : OUI</span><br>';
         txt += '<span style="color:#00e676;font-weight:bold;">✅ Aller-retour : OUI</span><br>';
-        txt += '📉 Marge restante : ' + (autonomie - ar).toFixed(1) + ' km';
+        txt += '📉 Marge restante : ' + (autonomie - ar).toFixed(1) + ' km<br>';
+        txt += '🔋 Batterie restante estimée : ' + pourcentRestant.toFixed(0) + ' %';
       } else if (autonomie >= distance) {
+        const whApresAller = dispo - (distance * conso);
+        let pourcentApresAller = (whApresAller / wh) * 100;
+        if (pourcentApresAller < 0) pourcentApresAller = 0;
+
         txt += '<span style="color:#00e676;font-weight:bold;">✅ Aller : OUI</span><br>';
         txt += '<span style="color:orange;font-weight:bold;">⚠️ Aller-retour : NON</span><br>';
+        txt += '🔋 Batterie restante estimée à l\'arrivée : ' + pourcentApresAller.toFixed(0) + ' %<br>';
         txt += '👉 Conseil : baisse la vitesse ou le mode pour assurer le retour';
       } else {
         txt += '<span style="color:#ff4d4d;font-weight:bold;">❌ Trajet impossible</span>';
