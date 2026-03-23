@@ -64,6 +64,11 @@ button{
   font-size:13px;
 }
 
+.highlight{
+  font-size:16px;
+  font-weight:bold;
+}
+
 .good{color:#00e676;}
 .warn{color:orange;}
 .bad{color:red;}
@@ -175,7 +180,7 @@ function calc(){
   else if(weight<=120) weightFactor=1.12;
   else weightFactor=1.20;
 
-  // consommation avec marge sécurité 10%
+  // conso avec sécurité
   let conso = mode * speed * weightFactor * 1.10;
 
   let autonomie = dispo / conso;
@@ -186,7 +191,7 @@ function calc(){
   txt += "🔋 Batterie : "+wh.toFixed(0)+" Wh<br>";
   txt += "⚡ Énergie dispo : "+dispo.toFixed(0)+" Wh<br>";
   txt += "⚙️ Conso : "+conso.toFixed(1)+" Wh/km<br>";
-  txt += "🛴 Autonomie : "+autonomie.toFixed(1)+" km<br>";
+  txt += "<span class='highlight'>🛴 Autonomie : "+autonomie.toFixed(1)+" km</span><br>";
   txt += "📏 Aller : "+distance+" km<br>";
   txt += "🔁 Aller-retour : "+ar+" km<br><br>";
 
@@ -194,7 +199,7 @@ function calc(){
     let reste = dispo - (ar*conso);
     let pourcent = (reste/wh)*100;
 
-    txt += "<span class='good'>✅ Aller-retour OK</span><br>";
+    txt += "<span class='good highlight'>✅ Aller-retour OK</span><br>";
     txt += "🔋 Batterie restante : "+pourcent.toFixed(0)+" %";
   }
 
@@ -202,13 +207,15 @@ function calc(){
     let reste = dispo - (distance*conso);
     let pourcent = (reste/wh)*100;
 
-    txt += "<span class='warn'>⚠️ Aller OK / retour limite</span><br>";
+    txt += "<span class='warn highlight'>⚠️ Aller OK / retour limite</span><br>";
     txt += "🔋 Batterie restante à l'arrivée : "+pourcent.toFixed(0)+" %";
   }
 
   else{
-    txt += "<span class='bad'>❌ Trajet impossible</span>";
+    txt += "<span class='bad highlight'>❌ Trajet impossible</span>";
   }
+
+  txt += "<br><br><span style='font-size:11px;color:#aaa;'>Estimation indicative basée sur des conditions moyennes. Les résultats peuvent varier selon le terrain, la température et le style de conduite.</span>";
 
   document.getElementById("result").innerHTML = txt;
 }
