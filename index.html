@@ -125,6 +125,7 @@ button:active{
   transform:scale(0.99);
 }
 
+/* RESULTAT */
 .result-card{
   margin-top:12px;
   background:rgba(28,28,28,0.98);
@@ -132,6 +133,22 @@ button:active{
   border-radius:18px;
   padding:16px;
   box-shadow:0 8px 20px rgba(0,0,0,0.25);
+  transition:0.2s;
+}
+
+.result-card.ok{
+  border:1px solid rgba(0,230,118,0.35);
+  box-shadow:0 8px 22px rgba(0,230,118,0.10);
+}
+
+.result-card.warn{
+  border:1px solid rgba(255,179,0,0.35);
+  box-shadow:0 8px 22px rgba(255,179,0,0.10);
+}
+
+.result-card.bad{
+  border:1px solid rgba(255,82,82,0.35);
+  box-shadow:0 8px 22px rgba(255,82,82,0.10);
 }
 
 .result-title{
@@ -141,20 +158,109 @@ button:active{
   margin-bottom:12px;
 }
 
-.result-line{
-  font-size:15px;
-  line-height:1.7;
-  margin-bottom:2px;
+.result-top{
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:12px;
+  margin-bottom:14px;
 }
 
-.big{
-  font-size:19px;
+.big-box{
+  background:#131313;
+  border-radius:16px;
+  padding:14px;
+}
+
+.big-label{
+  font-size:12px;
+  color:#aaaaaa;
+  margin-bottom:6px;
+}
+
+.big-value{
+  font-size:30px;
   font-weight:800;
+  line-height:1.1;
 }
 
-.good{color:#00e676;font-weight:800;}
-.warn{color:#ffb300;font-weight:800;}
-.bad{color:#ff5252;font-weight:800;}
+.status-box{
+  background:#131313;
+  border-radius:16px;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.status-label{
+  font-size:12px;
+  color:#aaaaaa;
+  margin-bottom:6px;
+}
+
+.status-value{
+  font-size:24px;
+  font-weight:800;
+  line-height:1.2;
+}
+
+.result-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+
+.metric{
+  background:#131313;
+  border-radius:14px;
+  padding:12px;
+}
+
+.metric-label{
+  font-size:12px;
+  color:#aaaaaa;
+  margin-bottom:4px;
+}
+
+.metric-value{
+  font-size:18px;
+  font-weight:700;
+}
+
+.battery-bar-wrap{
+  margin-top:14px;
+}
+
+.battery-bar-label{
+  font-size:12px;
+  color:#aaaaaa;
+  margin-bottom:6px;
+}
+
+.battery-bar{
+  width:100%;
+  height:14px;
+  background:#2a2a2a;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.battery-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#00e676,#7cffcb);
+  border-radius:999px;
+  transition:width 0.3s ease;
+}
+
+.battery-fill.warn{
+  background:linear-gradient(90deg,#ffb300,#ffd166);
+}
+
+.battery-fill.bad{
+  background:linear-gradient(90deg,#ff5252,#ff8a80);
+}
 
 .note{
   margin-top:12px;
@@ -162,6 +268,10 @@ button:active{
   color:#a8a8a8;
   line-height:1.5;
 }
+
+.good{color:#00e676;font-weight:800;}
+.warn{color:#ffb300;font-weight:800;}
+.bad{color:#ff5252;font-weight:800;}
 
 @media(max-width:700px){
   body{
@@ -171,6 +281,14 @@ button:active{
   .grid{
     grid-template-columns:1fr;
     gap:10px;
+  }
+
+  .result-top{
+    grid-template-columns:1fr;
+  }
+
+  .result-grid{
+    grid-template-columns:1fr;
   }
 
   .header h1{
@@ -192,12 +310,12 @@ button:active{
     font-size:16px;
   }
 
-  .result-line{
-    font-size:14px;
+  .big-value{
+    font-size:26px;
   }
 
-  .big{
-    font-size:18px;
+  .status-value{
+    font-size:22px;
   }
 }
 </style>
@@ -300,10 +418,51 @@ button:active{
 
   </div>
 
-  <div class="result-card">
+  <div class="result-card" id="resultCard">
     <div class="result-title">📊 Résultat autonomie</div>
-    <div id="result">Clique sur calculer</div>
-    <div class="note">
+
+    <div class="result-top">
+      <div class="big-box">
+        <div class="big-label">AUTONOMIE ESTIMÉE</div>
+        <div class="big-value" id="autonomieBig">-- km</div>
+      </div>
+
+      <div class="status-box">
+        <div class="status-label">STATUT</div>
+        <div class="status-value" id="statusBig">Clique sur calculer</div>
+      </div>
+    </div>
+
+    <div class="result-grid">
+      <div class="metric">
+        <div class="metric-label">Batterie totale</div>
+        <div class="metric-value" id="metricWh">-- Wh</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-label">Énergie disponible</div>
+        <div class="metric-value" id="metricDispo">-- Wh</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-label">Consommation estimée</div>
+        <div class="metric-value" id="metricConso">-- Wh/km</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-label">Distance aller-retour</div>
+        <div class="metric-value" id="metricAR">-- km</div>
+      </div>
+    </div>
+
+    <div class="battery-bar-wrap">
+      <div class="battery-bar-label" id="batteryBarLabel">Batterie restante estimée</div>
+      <div class="battery-bar">
+        <div class="battery-fill" id="batteryFill"></div>
+      </div>
+    </div>
+
+    <div class="note" id="resultNote">
       Estimation indicative basée sur des conditions moyennes avec marge de sécurité.
     </div>
   </div>
@@ -324,6 +483,24 @@ function getWeightFactor(weight){
   if(weight <= 105) return 1.07;
   if(weight <= 120) return 1.14;
   return 1.22;
+}
+
+function setResultTheme(theme){
+  const card = document.getElementById("resultCard");
+  const fill = document.getElementById("batteryFill");
+
+  card.classList.remove("ok","warn","bad");
+  fill.classList.remove("warn","bad");
+
+  if(theme === "ok"){
+    card.classList.add("ok");
+  } else if(theme === "warn"){
+    card.classList.add("warn");
+    fill.classList.add("warn");
+  } else if(theme === "bad"){
+    card.classList.add("bad");
+    fill.classList.add("bad");
+  }
 }
 
 function calc(){
@@ -347,7 +524,16 @@ function calc(){
     isNaN(speed) ||
     isNaN(distance)
   ){
-    document.getElementById("result").innerHTML = "Merci de remplir tous les champs.";
+    document.getElementById("autonomieBig").innerHTML = "-- km";
+    document.getElementById("statusBig").innerHTML = "Champs manquants";
+    document.getElementById("metricWh").innerHTML = "-- Wh";
+    document.getElementById("metricDispo").innerHTML = "-- Wh";
+    document.getElementById("metricConso").innerHTML = "-- Wh/km";
+    document.getElementById("metricAR").innerHTML = "-- km";
+    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée";
+    document.getElementById("batteryFill").style.width = "0%";
+    document.getElementById("resultNote").innerHTML = "Merci de remplir tous les champs.";
+    setResultTheme("bad");
     return;
   }
 
@@ -361,33 +547,41 @@ function calc(){
   let autonomie = dispo / conso;
   let allerRetour = distance * 2;
 
-  let txt = "";
-  txt += "<div class='result-line'>🔋 <b>Batterie :</b> " + wh.toFixed(0) + " Wh</div>";
-  txt += "<div class='result-line'>⚡ <b>Énergie dispo :</b> " + dispo.toFixed(0) + " Wh</div>";
-  txt += "<div class='result-line'>⚙️ <b>Conso estimée :</b> " + conso.toFixed(1) + " Wh/km</div>";
-  txt += "<div class='result-line big'>🛴 Autonomie estimée : " + autonomie.toFixed(1) + " km</div>";
-  txt += "<div class='result-line'>📏 <b>Aller :</b> " + distance.toFixed(1) + " km</div>";
-  txt += "<div class='result-line'>🔁 <b>Aller-retour :</b> " + allerRetour.toFixed(1) + " km</div><br>";
+  document.getElementById("autonomieBig").innerHTML = autonomie.toFixed(1) + " km";
+  document.getElementById("metricWh").innerHTML = wh.toFixed(0) + " Wh";
+  document.getElementById("metricDispo").innerHTML = dispo.toFixed(0) + " Wh";
+  document.getElementById("metricConso").innerHTML = conso.toFixed(1) + " Wh/km";
+  document.getElementById("metricAR").innerHTML = allerRetour.toFixed(1) + " km";
 
   if(autonomie >= allerRetour){
     let resteWh = dispo - (allerRetour * conso);
     let restePct = (resteWh / wh) * 100;
+    if(restePct < 0) restePct = 0;
 
-    txt += "<div class='result-line big good'>✅ Aller-retour OK</div>";
-    txt += "<div class='result-line'>🔋 <b>Batterie restante estimée :</b> " + restePct.toFixed(0) + " %</div>";
+    document.getElementById("statusBig").innerHTML = "<span class='good'>Aller-retour OK</span>";
+    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée : " + restePct.toFixed(0) + " %";
+    document.getElementById("batteryFill").style.width = restePct.toFixed(0) + "%";
+    document.getElementById("resultNote").innerHTML = "Trajet faisable avec marge restante estimée.";
+    setResultTheme("ok");
   }
   else if(autonomie >= distance){
     let resteWh = dispo - (distance * conso);
     let restePct = (resteWh / wh) * 100;
+    if(restePct < 0) restePct = 0;
 
-    txt += "<div class='result-line big warn'>⚠️ Aller OK / retour limite</div>";
-    txt += "<div class='result-line'>🔋 <b>Batterie restante à l'arrivée :</b> " + restePct.toFixed(0) + " %</div>";
+    document.getElementById("statusBig").innerHTML = "<span class='warn'>Aller OK / retour limite</span>";
+    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée à l'arrivée : " + restePct.toFixed(0) + " %";
+    document.getElementById("batteryFill").style.width = restePct.toFixed(0) + "%";
+    document.getElementById("resultNote").innerHTML = "Conseil : réduire la vitesse ou le mode pour sécuriser le retour.";
+    setResultTheme("warn");
   }
   else{
-    txt += "<div class='result-line big bad'>❌ Trajet impossible</div>";
+    document.getElementById("statusBig").innerHTML = "<span class='bad'>Trajet impossible</span>";
+    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée";
+    document.getElementById("batteryFill").style.width = "0%";
+    document.getElementById("resultNote").innerHTML = "L’autonomie estimée ne permet pas de réaliser ce trajet en sécurité.";
+    setResultTheme("bad");
   }
-
-  document.getElementById("result").innerHTML = txt;
 }
 
 updateWh();
