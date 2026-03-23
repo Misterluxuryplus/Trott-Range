@@ -53,6 +53,7 @@ button{
   border:none;
   border-radius:8px;
   font-weight:bold;
+  cursor:pointer;
 }
 
 .result{
@@ -86,7 +87,7 @@ button{
 <input type="number" id="battery" value="100" max="100" min="0">
 
 <label>Poids (kg)</label>
-<input type="number" id="weight" value="107">
+<input type="number" id="weight" value="100">
 
 <label>Volts (V)</label>
 <select id="volts" onchange="updateWh()">
@@ -118,9 +119,9 @@ button{
 <div class="box">
 <label>Mode de conduite</label>
 <select id="mode">
-<option value="22">Éco</option>
-<option value="30" selected>Confort</option>
-<option value="52">Escalade</option>
+<option value="16">Éco</option>
+<option value="22" selected>Confort</option>
+<option value="32">Escalade</option>
 </select>
 
 <label>Vitesse (km/h)</label>
@@ -166,15 +167,16 @@ function calc(){
 
   let dispo = wh*(battery/100);
 
-  // précision poids
+  // ajustement poids réaliste
   let weightFactor = 1;
   if(weight<=75) weightFactor=0.92;
   else if(weight<=90) weightFactor=0.98;
   else if(weight<=105) weightFactor=1.05;
   else if(weight<=120) weightFactor=1.12;
-  else weightFactor=1.2;
+  else weightFactor=1.20;
 
-  let conso = mode * speed * weightFactor;
+  // consommation avec marge sécurité 10%
+  let conso = mode * speed * weightFactor * 1.10;
 
   let autonomie = dispo / conso;
   let ar = distance*2;
