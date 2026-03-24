@@ -74,13 +74,11 @@ input, select {
 }
 
 .btn-group {
-  display: flex;
-  gap: 10px;
   margin-top: 18px;
 }
 
 button {
-  flex: 1;
+  width: 100%;
   padding: 12px;
   border: none;
   border-radius: 10px;
@@ -92,11 +90,6 @@ button {
 .calc-btn {
   background: #00e56f;
   color: black;
-}
-
-.reset-btn {
-  background: #333;
-  color: white;
 }
 
 .result-box {
@@ -185,7 +178,6 @@ button {
 
     <div class="btn-group">
       <button class="calc-btn" onclick="calculate()">Calculer</button>
-      <button class="reset-btn" onclick="resetForm()">Reset</button>
     </div>
   </div>
 
@@ -231,19 +223,6 @@ function calculate() {
   const mode = document.getElementById("mode").value;
   const result = document.getElementById("result");
 
-  if (
-    isNaN(batteryPercent) ||
-    isNaN(weight) ||
-    isNaN(voltage) ||
-    isNaN(ah) ||
-    isNaN(speed) ||
-    isNaN(distance) ||
-    !mode
-  ) {
-    result.innerHTML = "Merci de remplir tous les champs.";
-    return;
-  }
-
   const totalWh = voltage * ah;
   const usableWh = totalWh * (batteryPercent / 100);
 
@@ -264,58 +243,42 @@ function calculate() {
   const aller = distance;
   const allerRetour = distance * 2;
 
-  const resteApresAllerKm = autonomie - aller;
-  const resteApresARKm = autonomie - allerRetour;
+  const resteAller = autonomie - aller;
+  const resteAR = autonomie - allerRetour;
 
-  let batterieRestanteAller = (resteApresAllerKm / autonomie) * batteryPercent;
-  let batterieRestanteAR = (resteApresARKm / autonomie) * batteryPercent;
+  let batterieAller = (resteAller / autonomie) * batteryPercent;
+  let batterieAR = (resteAR / autonomie) * batteryPercent;
 
-  if (!isFinite(batterieRestanteAller)) batterieRestanteAller = 0;
-  if (!isFinite(batterieRestanteAR)) batterieRestanteAR = 0;
+  batterieAller = Math.max(0, batterieAller);
+  batterieAR = Math.max(0, batterieAR);
 
-  batterieRestanteAller = Math.max(0, batterieRestanteAller);
-  batterieRestanteAR = Math.max(0, batterieRestanteAR);
-
-  const allerPossible = autonomie >= aller;
-  const arPossible = autonomie >= allerRetour;
+  const allerOK = autonomie >= aller;
+  const arOK = autonomie >= allerRetour;
 
   let conseil = "";
-  let conseilClass = "good";
+  let classe = "good";
 
-  if (!allerPossible) {
-    conseil = "Autonomie trop juste, même l'aller paraît risqué.";
-    conseilClass = "bad";
-  } else if (allerPossible && !arPossible) {
-    conseil = "L'aller semble possible, mais pas le retour complet.";
-    conseilClass = "warn";
-  } else if (speed > 40 && mode !== "eco") {
-    conseil = "En baissant la vitesse ou en roulant plus calme, tu peux gagner de l'autonomie.";
-    conseilClass = "warn";
+  if (!allerOK) {
+    conseil = "Autonomie insuffisante même pour l'aller.";
+    classe = "bad";
+  } else if (!arOK) {
+    conseil = "Aller possible mais pas le retour complet.";
+    classe = "warn";
+  } else if (speed > 40) {
+    conseil = "Tu peux gagner en autonomie en roulant moins vite.";
+    classe = "warn";
   } else {
-    conseil = "Autonomie confortable pour ce trajet.";
-    conseilClass = "good";
+    conseil = "Autonomie confortable.";
   }
 
   result.innerHTML = `
-    Autonomie estimée : ${autonomie.toFixed(1)} km<br>
-    Aller possible : <span class="${allerPossible ? 'good' : 'bad'}">${allerPossible ? 'Oui' : 'Non'}</span><br>
-    Aller-retour possible : <span class="${arPossible ? 'good' : 'bad'}">${arPossible ? 'Oui' : 'Non'}</span><br>
-    Batterie restante après l'aller : ${batterieRestanteAller.toFixed(0)} %<br>
-    Batterie restante après l'aller-retour : ${batterieRestanteAR.toFixed(0)} %<br><br>
-    <span class="${conseilClass}">${conseil}</span>
+    Autonomie : ${autonomie.toFixed(1)} km<br>
+    Aller : <span class="${allerOK ? 'good' : 'bad'}">${allerOK ? 'OK' : 'NON'}</span><br>
+    Aller-retour : <span class="${arOK ? 'good' : 'bad'}">${arOK ? 'OK' : 'NON'}</span><br>
+    Batterie après aller : ${batterieAller.toFixed(0)} %<br>
+    Batterie après A/R : ${batterieAR.toFixed(0)} %<br><br>
+    <span class="${classe}">${conseil}</span>
   `;
-}
-
-function resetForm() {
-  document.getElementById("batteryPercent").value = 100;
-  document.getElementById("weight").value = 80;
-  document.getElementById("voltage").value = 60;
-  document.getElementById("ah").value = 35;
-  document.getElementById("mode").value = "confort";
-  document.getElementById("speed").value = 45;
-  document.getElementById("distance").value = 10;
-  updateWh();
-  document.getElementById("result").innerHTML = "Modifie les valeurs puis clique sur Calculer";
 }
 </script>
 
