@@ -3,624 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculateur autonomie</title>
+<title>Calculateur Autonomie</title>
 
 <style>
-*{
-  box-sizing:border-box;
+body {
+  font-family: Arial;
+  background: #f2f2f2;
+  padding: 15px;
 }
 
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(180deg,#0d0d0d 0%, #141414 100%);
-  color:white;
-  padding:12px;
+.container {
+  max-width: 400px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.app{
-  max-width:900px;
-  margin:0 auto;
+h2 {
+  text-align: center;
 }
 
-.header{
-  text-align:center;
-  margin-bottom:12px;
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 10px;
 }
 
-.header h1{
-  margin:0;
-  color:#00e676;
-  font-size:24px;
-  font-weight:800;
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
 }
 
-.header p{
-  margin:6px 0 0;
-  color:#bdbdbd;
-  font-size:13px;
+button {
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #007bff;
+  color: white;
+  font-size: 16px;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.card{
-  background:rgba(28,28,28,0.95);
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:18px;
-  padding:14px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.25);
-}
-
-.card-title{
-  font-size:16px;
-  font-weight:700;
-  margin-bottom:10px;
-  color:#ffffff;
-}
-
-label{
-  display:block;
-  font-size:13px;
-  font-weight:700;
-  color:#e6e6e6;
-  margin:8px 0 5px;
-}
-
-.input-wrap{
-  position:relative;
-}
-
-input, select{
-  width:100%;
-  padding:12px 12px;
-  font-size:15px;
-  border:none;
-  border-radius:12px;
-  outline:none;
-  background:#f5f5f5;
-  color:#111;
-}
-
-.readonly{
-  background:#dfe8df !important;
-  font-weight:700;
-}
-
-.unit{
-  position:absolute;
-  right:10px;
-  top:50%;
-  transform:translateY(-50%);
-  color:#444;
-  font-size:12px;
-  font-weight:700;
-  pointer-events:none;
-  background:#eaeaea;
-  padding:3px 7px;
-  border-radius:8px;
-}
-
-/* boutons rapides */
-.quick-buttons{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:12px;
-}
-
-.quick-btn{
-  border:none;
-  border-radius:12px;
-  padding:10px 12px;
-  background:#232323;
-  color:white;
-  font-size:13px;
-  font-weight:700;
-  cursor:pointer;
-  border:1px solid rgba(255,255,255,0.08);
-}
-
-.quick-btn:hover{
-  background:#2d2d2d;
-}
-
-.actions{
-  margin-top:12px;
-}
-
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(180deg,#00f07a 0%, #00d966 100%);
-  color:#0e0e0e;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  box-shadow:0 6px 16px rgba(0,230,118,0.25);
-}
-
-button:active{
-  transform:scale(0.99);
-}
-
-/* RESULTAT */
-.result-card{
-  margin-top:12px;
-  background:rgba(28,28,28,0.98);
-  border:1px solid rgba(255,255,255,0.05);
-  border-radius:18px;
-  padding:16px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.25);
-  transition:0.2s;
-}
-
-.result-card.ok{
-  border:1px solid rgba(0,230,118,0.35);
-  box-shadow:0 8px 22px rgba(0,230,118,0.10);
-}
-
-.result-card.warn{
-  border:1px solid rgba(255,179,0,0.35);
-  box-shadow:0 8px 22px rgba(255,179,0,0.10);
-}
-
-.result-card.bad{
-  border:1px solid rgba(255,82,82,0.35);
-  box-shadow:0 8px 22px rgba(255,82,82,0.10);
-}
-
-.result-title{
-  font-size:18px;
-  font-weight:800;
-  color:#00e676;
-  margin-bottom:12px;
-}
-
-.result-top{
-  display:grid;
-  grid-template-columns:1.2fr 1fr;
-  gap:12px;
-  margin-bottom:14px;
-}
-
-.big-box{
-  background:#131313;
-  border-radius:16px;
-  padding:14px;
-}
-
-.big-label{
-  font-size:12px;
-  color:#aaaaaa;
-  margin-bottom:6px;
-}
-
-.big-value{
-  font-size:30px;
-  font-weight:800;
-  line-height:1.1;
-}
-
-.status-box{
-  background:#131313;
-  border-radius:16px;
-  padding:14px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-.status-label{
-  font-size:12px;
-  color:#aaaaaa;
-  margin-bottom:6px;
-}
-
-.status-value{
-  font-size:24px;
-  font-weight:800;
-  line-height:1.2;
-}
-
-.result-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:10px;
-}
-
-.metric{
-  background:#131313;
-  border-radius:14px;
-  padding:12px;
-}
-
-.metric-label{
-  font-size:12px;
-  color:#aaaaaa;
-  margin-bottom:4px;
-}
-
-.metric-value{
-  font-size:18px;
-  font-weight:700;
-}
-
-.battery-bar-wrap{
-  margin-top:14px;
-}
-
-.battery-bar-label{
-  font-size:12px;
-  color:#aaaaaa;
-  margin-bottom:6px;
-}
-
-.battery-bar{
-  width:100%;
-  height:14px;
-  background:#2a2a2a;
-  border-radius:999px;
-  overflow:hidden;
-}
-
-.battery-fill{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#00e676,#7cffcb);
-  border-radius:999px;
-  transition:width 0.3s ease;
-}
-
-.battery-fill.warn{
-  background:linear-gradient(90deg,#ffb300,#ffd166);
-}
-
-.battery-fill.bad{
-  background:linear-gradient(90deg,#ff5252,#ff8a80);
-}
-
-.note{
-  margin-top:12px;
-  font-size:12px;
-  color:#a8a8a8;
-  line-height:1.5;
-}
-
-.good{color:#00e676;font-weight:800;}
-.warn{color:#ffb300;font-weight:800;}
-.bad{color:#ff5252;font-weight:800;}
-
-@media(max-width:700px){
-  body{
-    padding:10px;
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-    gap:10px;
-  }
-
-  .result-top{
-    grid-template-columns:1fr;
-  }
-
-  .result-grid{
-    grid-template-columns:1fr;
-  }
-
-  .header h1{
-    font-size:22px;
-  }
-
-  .card, .result-card{
-    padding:12px;
-    border-radius:16px;
-  }
-
-  input, select{
-    padding:11px 11px;
-    font-size:15px;
-  }
-
-  button{
-    padding:13px;
-    font-size:16px;
-  }
-
-  .big-value{
-    font-size:26px;
-  }
-
-  .status-value{
-    font-size:22px;
-  }
+.result {
+  margin-top: 15px;
+  padding: 15px;
+  background: #e9f3ff;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<div class="container">
+  <h2>Calculateur autonomie</h2>
 
-  <div class="header">
-    <h1>Calculateur autonomie</h1>
-    <p>Estimation rapide avant un trajet</p>
+  <label>Voltage (V)</label>
+  <input type="number" id="voltage" value="60">
+
+  <label>Batterie (Ah)</label>
+  <input type="number" id="battery" value="30">
+
+  <label>Poids (kg)</label>
+  <input type="number" id="weight" value="80">
+
+  <label>Mode</label>
+  <select id="mode">
+    <option value="eco">Eco</option>
+    <option value="confort">Confort</option>
+    <option value="sport">Sport</option>
+  </select>
+
+  <label>Vitesse (km/h)</label>
+  <input type="number" id="speed" value="25">
+
+  <button onclick="calculate()">Calculer</button>
+
+  <div class="result" id="result">
+    Résultat ici
   </div>
-
-  <div class="grid">
-
-    <div class="card">
-      <div class="card-title">🔋 Batterie / Trott</div>
-
-      <div class="quick-buttons">
-        <button class="quick-btn" onclick="setBatteryPreset(52,20)">52V 20Ah</button>
-        <button class="quick-btn" onclick="setBatteryPreset(60,35)">60V 35Ah</button>
-        <button class="quick-btn" onclick="setBatteryPreset(72,40)">72V 40Ah</button>
-        <button class="quick-btn" onclick="setBatteryPreset(72,50)">72V 50Ah</button>
-      </div>
-
-      <label>Batterie (%)</label>
-      <div class="input-wrap">
-        <input type="number" id="battery" value="100" min="0" max="100">
-        <span class="unit">%</span>
-      </div>
-
-      <label>Poids (kg)</label>
-      <div class="input-wrap">
-        <input type="number" id="weight" value="90" min="1">
-        <span class="unit">kg</span>
-      </div>
-
-      <label>Volts (V)</label>
-      <div class="input-wrap">
-        <select id="volts" onchange="updateWh()">
-          <option value="36">36</option>
-          <option value="48">48</option>
-          <option value="52">52</option>
-          <option value="60" selected>60</option>
-          <option value="72">72</option>
-        </select>
-        <span class="unit">V</span>
-      </div>
-
-      <label>Ampérage (Ah)</label>
-      <div class="input-wrap">
-        <select id="ah" onchange="updateWh()">
-          <option value="15">15</option>
-          <option value="18">18</option>
-          <option value="20">20</option>
-          <option value="24">24</option>
-          <option value="28">28</option>
-          <option value="30">30</option>
-          <option value="35" selected>35</option>
-          <option value="40">40</option>
-          <option value="45">45</option>
-          <option value="50">50</option>
-        </select>
-        <span class="unit">Ah</span>
-      </div>
-
-      <label>Capacité batterie (Wh)</label>
-      <div class="input-wrap">
-        <input type="number" id="wh" class="readonly" readonly>
-        <span class="unit">Wh</span>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">🛣️ Trajet / Conduite</div>
-
-      <label>Mode de conduite</label>
-      <div class="input-wrap">
-        <select id="mode">
-          <option value="14">Éco</option>
-          <option value="18" selected>Confort</option>
-          <option value="25">Escalade</option>
-        </select>
-      </div>
-
-      <label>Vitesse (km/h)</label>
-      <div class="input-wrap">
-        <select id="speed">
-          <option value="1.00">25</option>
-          <option value="1.08">35</option>
-          <option value="1.18" selected>45</option>
-          <option value="1.30">55</option>
-        </select>
-      </div>
-
-      <label>Distance aller (km)</label>
-      <div class="input-wrap">
-        <input type="number" id="distance" value="10" min="0" step="0.1">
-        <span class="unit">km</span>
-      </div>
-
-      <div class="actions">
-        <button onclick="calc()">Calculer</button>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="result-card" id="resultCard">
-    <div class="result-title">📊 Résultat autonomie</div>
-
-    <div class="result-top">
-      <div class="big-box">
-        <div class="big-label">AUTONOMIE ESTIMÉE</div>
-        <div class="big-value" id="autonomieBig">-- km</div>
-      </div>
-
-      <div class="status-box">
-        <div class="status-label">STATUT</div>
-        <div class="status-value" id="statusBig">Clique sur calculer</div>
-      </div>
-    </div>
-
-    <div class="result-grid">
-      <div class="metric">
-        <div class="metric-label">Batterie totale</div>
-        <div class="metric-value" id="metricWh">-- Wh</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-label">Énergie disponible</div>
-        <div class="metric-value" id="metricDispo">-- Wh</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-label">Consommation estimée</div>
-        <div class="metric-value" id="metricConso">-- Wh/km</div>
-      </div>
-
-      <div class="metric">
-        <div class="metric-label">Distance aller-retour</div>
-        <div class="metric-value" id="metricAR">-- km</div>
-      </div>
-    </div>
-
-    <div class="battery-bar-wrap">
-      <div class="battery-bar-label" id="batteryBarLabel">Batterie restante estimée</div>
-      <div class="battery-bar">
-        <div class="battery-fill" id="batteryFill"></div>
-      </div>
-    </div>
-
-    <div class="note" id="resultNote">
-      Estimation indicative basée sur des conditions moyennes avec marge de sécurité.
-    </div>
-  </div>
-
 </div>
 
 <script>
-function updateWh(){
-  let v = parseFloat(document.getElementById("volts").value);
-  let ah = parseFloat(document.getElementById("ah").value);
-  document.getElementById("wh").value = (v * ah).toFixed(0);
-}
-
-function setBatteryPreset(v, ah){
-  document.getElementById("volts").value = v;
-  document.getElementById("ah").value = ah;
-  updateWh();
-}
-
-function getWeightFactor(weight){
-  if(weight <= 65) return 0.90;
-  if(weight <= 75) return 0.95;
-  if(weight <= 90) return 1.00;
-  if(weight <= 105) return 1.07;
-  if(weight <= 120) return 1.14;
-  return 1.22;
-}
-
-function setResultTheme(theme){
-  const card = document.getElementById("resultCard");
-  const fill = document.getElementById("batteryFill");
-
-  card.classList.remove("ok","warn","bad");
-  fill.classList.remove("warn","bad");
-
-  if(theme === "ok"){
-    card.classList.add("ok");
-  } else if(theme === "warn"){
-    card.classList.add("warn");
-    fill.classList.add("warn");
-  } else if(theme === "bad"){
-    card.classList.add("bad");
-    fill.classList.add("bad");
-  }
-}
-
-function calc(){
-
+function calculate() {
+  let voltage = parseFloat(document.getElementById("voltage").value);
   let battery = parseFloat(document.getElementById("battery").value);
-  if(isNaN(battery)) battery = 0;
-  if(battery > 100) battery = 100;
-  if(battery < 0) battery = 0;
-  document.getElementById("battery").value = battery;
-
   let weight = parseFloat(document.getElementById("weight").value);
-  let wh = parseFloat(document.getElementById("wh").value);
-  let mode = parseFloat(document.getElementById("mode").value);
   let speed = parseFloat(document.getElementById("speed").value);
-  let distance = parseFloat(document.getElementById("distance").value);
+  let mode = document.getElementById("mode").value;
 
-  if(
-    isNaN(weight) ||
-    isNaN(wh) ||
-    isNaN(mode) ||
-    isNaN(speed) ||
-    isNaN(distance)
-  ){
-    document.getElementById("autonomieBig").innerHTML = "-- km";
-    document.getElementById("statusBig").innerHTML = "Champs manquants";
-    document.getElementById("metricWh").innerHTML = "-- Wh";
-    document.getElementById("metricDispo").innerHTML = "-- Wh";
-    document.getElementById("metricConso").innerHTML = "-- Wh/km";
-    document.getElementById("metricAR").innerHTML = "-- km";
-    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée";
-    document.getElementById("batteryFill").style.width = "0%";
-    document.getElementById("resultNote").innerHTML = "Merci de remplir tous les champs.";
-    setResultTheme("bad");
-    return;
-  }
+  let wh = voltage * battery;
 
-  let dispo = wh * (battery / 100);
-  let weightFactor = getWeightFactor(weight);
+  let whPerKm;
 
-  let consoBase = mode * speed * weightFactor;
-  let conso = consoBase * 1.12;
+  if (mode === "eco") whPerKm = 11;
+  if (mode === "confort") whPerKm = 16;
+  if (mode === "sport") whPerKm = 22;
 
-  let autonomie = dispo / conso;
-  let allerRetour = distance * 2;
+  if (weight > 90) whPerKm += 2;
+  if (weight < 65) whPerKm -= 1;
 
-  document.getElementById("autonomieBig").innerHTML = autonomie.toFixed(1) + " km";
-  document.getElementById("metricWh").innerHTML = wh.toFixed(0) + " Wh";
-  document.getElementById("metricDispo").innerHTML = dispo.toFixed(0) + " Wh";
-  document.getElementById("metricConso").innerHTML = conso.toFixed(1) + " Wh/km";
-  document.getElementById("metricAR").innerHTML = allerRetour.toFixed(1) + " km";
+  if (speed > 40) whPerKm += 2;
+  if (speed < 20) whPerKm -= 1;
 
-  if(autonomie >= allerRetour){
-    let resteWh = dispo - (allerRetour * conso);
-    let restePct = (resteWh / wh) * 100;
-    if(restePct < 0) restePct = 0;
+  let range = wh / whPerKm;
+  let safeRange = range * 0.88;
 
-    document.getElementById("statusBig").innerHTML = "<span class='good'>Aller-retour OK</span>";
-    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée : " + restePct.toFixed(0) + " %";
-    document.getElementById("batteryFill").style.width = restePct.toFixed(0) + "%";
-    document.getElementById("resultNote").innerHTML = "Trajet faisable avec marge restante estimée.";
-    setResultTheme("ok");
-  }
-  else if(autonomie >= distance){
-    let resteWh = dispo - (distance * conso);
-    let restePct = (resteWh / wh) * 100;
-    if(restePct < 0) restePct = 0;
-
-    document.getElementById("statusBig").innerHTML = "<span class='warn'>Aller OK / retour limite</span>";
-    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée à l'arrivée : " + restePct.toFixed(0) + " %";
-    document.getElementById("batteryFill").style.width = restePct.toFixed(0) + "%";
-    document.getElementById("resultNote").innerHTML = "Conseil : réduire la vitesse ou le mode pour sécuriser le retour.";
-    setResultTheme("warn");
-  }
-  else{
-    document.getElementById("statusBig").innerHTML = "<span class='bad'>Trajet impossible</span>";
-    document.getElementById("batteryBarLabel").innerHTML = "Batterie restante estimée";
-    document.getElementById("batteryFill").style.width = "0%";
-    document.getElementById("resultNote").innerHTML = "L’autonomie estimée ne permet pas de réaliser ce trajet en sécurité.";
-    setResultTheme("bad");
-  }
+  document.getElementById("result").innerHTML =
+    "Autonomie estimée : " + safeRange.toFixed(1) + " km";
 }
-
-updateWh();
 </script>
 
 </body>
