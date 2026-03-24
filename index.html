@@ -10,7 +10,6 @@ body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: linear-gradient(180deg, #0f2027, #203a43, #2c5364);
-  background-attachment: fixed;
   color: white;
   padding: 20px;
 }
@@ -145,36 +144,36 @@ button {
   <div class="card">
     <h3>🔋 Batterie / Trott</h3>
 
-    <label>Batterie actuelle (%)</label>
+    <label for="batteryPercent">Batterie actuelle (%)</label>
     <input type="number" id="batteryPercent" value="100">
 
-    <label>Poids pilote (kg)</label>
+    <label for="weight">Poids pilote (kg)</label>
     <input type="number" id="weight" value="80">
 
-    <label>Volts (V)</label>
+    <label for="voltage">Volts (V)</label>
     <input type="number" id="voltage" value="60">
 
-    <label>Ampérage (Ah)</label>
+    <label for="ah">Ampérage (Ah)</label>
     <input type="number" id="ah" value="35">
 
-    <label>Capacité batterie totale (Wh)</label>
+    <label for="wh">Capacité batterie totale (Wh)</label>
     <input type="number" id="wh" class="readonly" readonly>
   </div>
 
   <div class="card">
     <h3>🛣️ Trajet / Conduite</h3>
 
-    <label>Mode de conduite</label>
+    <label for="mode">Mode de conduite</label>
     <select id="mode">
       <option value="eco">Eco</option>
       <option value="confort" selected>Confort</option>
       <option value="sport">Sport</option>
     </select>
 
-    <label>Vitesse moyenne (km/h)</label>
+    <label for="speed">Vitesse moyenne (km/h)</label>
     <input type="number" id="speed" value="45">
 
-    <label>Distance aller (km)</label>
+    <label for="distance">Distance aller (km)</label>
     <input type="number" id="distance" value="10">
 
     <div class="btn-group">
@@ -224,6 +223,19 @@ function calculate() {
   const mode = document.getElementById("mode").value;
   const result = document.getElementById("result");
 
+  if (
+    isNaN(batteryPercent) ||
+    isNaN(weight) ||
+    isNaN(voltage) ||
+    isNaN(ah) ||
+    isNaN(speed) ||
+    isNaN(distance) ||
+    !mode
+  ) {
+    result.innerHTML = "Merci de remplir tous les champs.";
+    return;
+  }
+
   const totalWh = voltage * ah;
   const usableWh = totalWh * (batteryPercent / 100);
 
@@ -272,14 +284,13 @@ function calculate() {
     conseil = "Autonomie confortable.";
   }
 
-  result.innerHTML = `
-    Autonomie : ${autonomie.toFixed(1)} km<br>
-    Aller : <span class="${allerOK ? 'good' : 'bad'}">${allerOK ? 'OK' : 'NON'}</span><br>
-    Aller-retour : <span class="${arOK ? 'good' : 'bad'}">${arOK ? 'OK' : 'NON'}</span><br>
-    Batterie après aller : ${batterieAller.toFixed(0)} %<br>
-    Batterie après A/R : ${batterieAR.toFixed(0)} %<br><br>
-    <span class="${classe}">${conseil}</span>
-  `;
+  result.innerHTML =
+    "Autonomie : " + autonomie.toFixed(1) + " km<br>" +
+    "Aller : <span class='" + (allerOK ? "good" : "bad") + "'>" + (allerOK ? "OK" : "NON") + "</span><br>" +
+    "Aller-retour : <span class='" + (arOK ? "good" : "bad") + "'>" + (arOK ? "OK" : "NON") + "</span><br>" +
+    "Batterie après aller : " + batterieAller.toFixed(0) + " %<br>" +
+    "Batterie après A/R : " + batterieAR.toFixed(0) + " %<br><br>" +
+    "<span class='" + classe + "'>" + conseil + "</span>";
 }
 </script>
 
