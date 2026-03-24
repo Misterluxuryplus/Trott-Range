@@ -9,8 +9,10 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(180deg, #0a2a43, #005bea, #00c6ff);
-  background-attachment: fixed;
+
+  /* FOND BIEN VISIBLE */
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
+
   color: white;
   padding: 20px;
 }
@@ -24,7 +26,7 @@ h1 {
 
 .subtitle {
   text-align: center;
-  color: #e0e0e0;
+  color: #ffffff;
   margin-bottom: 22px;
   font-size: 14px;
 }
@@ -38,11 +40,12 @@ h1 {
 .card {
   flex: 1;
   min-width: 300px;
-  background: rgba(22, 22, 22, 0.9);
+
+  /* IMPORTANT → on rend les blocs un peu transparents */
+  background: rgba(0,0,0,0.75);
+
   border-radius: 18px;
   padding: 18px;
-  box-shadow: 0 0 25px rgba(0,255,132,0.12);
-  backdrop-filter: blur(6px);
 }
 
 h3 {
@@ -67,12 +70,6 @@ input, select {
   background: #f1f1f1;
   color: black;
   font-size: 15px;
-  box-sizing: border-box;
-}
-
-.readonly {
-  background: #cfd8cc;
-  font-weight: bold;
 }
 
 .btn-group {
@@ -87,28 +84,15 @@ button {
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
-}
-
-.calc-btn {
   background: #00e56f;
   color: black;
-  box-shadow: 0 0 15px rgba(0,255,132,0.4);
 }
 
 .result-box {
   margin-top: 18px;
-  background: rgba(22,22,22,0.9);
+  background: rgba(0,0,0,0.75);
   border-radius: 18px;
   padding: 18px;
-  box-shadow: 0 0 25px rgba(0,255,132,0.12);
-  backdrop-filter: blur(6px);
-}
-
-.result-title {
-  color: #00ff84;
-  font-weight: bold;
-  margin-bottom: 10px;
-  font-size: 16px;
 }
 
 .result {
@@ -117,24 +101,9 @@ button {
   line-height: 1.6;
 }
 
-.note {
-  margin-top: 10px;
-  font-size: 11px;
-  color: #ccc;
-}
-
 .good { color: #00ff84; }
 .warn { color: #ffcc66; }
 .bad  { color: #ff6b6b; }
-
-@media (max-width: 600px) {
-  h1 { font-size: 23px; }
-  .subtitle { font-size: 13px; }
-  h3 { font-size: 17px; }
-  label { font-size: 13px; }
-  input, select, button { font-size: 14px; }
-  .result { font-size: 16px; }
-}
 </style>
 </head>
 
@@ -146,143 +115,71 @@ button {
 <div class="container">
 
   <div class="card">
-    <h3>🔋 Batterie / Trott</h3>
+    <h3>Batterie</h3>
 
-    <label>Batterie actuelle (%)</label>
+    <label>Batterie (%)</label>
     <input type="number" id="batteryPercent" value="100">
 
-    <label>Poids pilote (kg)</label>
+    <label>Poids</label>
     <input type="number" id="weight" value="80">
 
-    <label>Volts (V)</label>
+    <label>Volts</label>
     <input type="number" id="voltage" value="60">
 
-    <label>Ampérage (Ah)</label>
+    <label>Ah</label>
     <input type="number" id="ah" value="35">
-
-    <label>Capacité batterie totale (Wh)</label>
-    <input type="number" id="wh" class="readonly" readonly>
   </div>
 
   <div class="card">
-    <h3>🛣️ Trajet / Conduite</h3>
+    <h3>Trajet</h3>
 
-    <label>Mode de conduite</label>
+    <label>Mode</label>
     <select id="mode">
       <option value="eco">Eco</option>
       <option value="confort" selected>Confort</option>
       <option value="sport">Sport</option>
     </select>
 
-    <label>Vitesse moyenne (km/h)</label>
+    <label>Vitesse</label>
     <input type="number" id="speed" value="45">
 
-    <label>Distance aller (km)</label>
+    <label>Distance</label>
     <input type="number" id="distance" value="10">
 
     <div class="btn-group">
-      <button class="calc-btn" onclick="calculate()">Calculer</button>
+      <button onclick="calculate()">Calculer</button>
     </div>
   </div>
 
 </div>
 
 <div class="result-box">
-  <div class="result-title">📊 Résultat autonomie</div>
   <div class="result" id="result">
-    Modifie les valeurs puis clique sur Calculer
-  </div>
-  <div class="note">
-    Résultat indicatif, ne reflète pas exactement la réalité.
+    Clique sur calculer
   </div>
 </div>
 
 <script>
-const voltageInput = document.getElementById("voltage");
-const ahInput = document.getElementById("ah");
-const whInput = document.getElementById("wh");
-
-function updateWh() {
-  const v = parseFloat(voltageInput.value);
-  const a = parseFloat(ahInput.value);
-
-  if (!isNaN(v) && !isNaN(a)) {
-    whInput.value = (v * a).toFixed(0);
-  } else {
-    whInput.value = "";
-  }
-}
-
-voltageInput.addEventListener("input", updateWh);
-ahInput.addEventListener("input", updateWh);
-updateWh();
-
 function calculate() {
-  const batteryPercent = parseFloat(document.getElementById("batteryPercent").value);
-  const weight = parseFloat(document.getElementById("weight").value);
-  const voltage = parseFloat(document.getElementById("voltage").value);
-  const ah = parseFloat(document.getElementById("ah").value);
-  const speed = parseFloat(document.getElementById("speed").value);
-  const distance = parseFloat(document.getElementById("distance").value);
+  const voltage = +document.getElementById("voltage").value;
+  const ah = +document.getElementById("ah").value;
+  const speed = +document.getElementById("speed").value;
+  const distance = +document.getElementById("distance").value;
   const mode = document.getElementById("mode").value;
-  const result = document.getElementById("result");
 
-  const totalWh = voltage * ah;
-  const usableWh = totalWh * (batteryPercent / 100);
+  let whPerKm = (mode === "eco") ? 11 : (mode === "confort") ? 16 : 22;
 
-  let whPerKm = 0;
+  if (speed > 40) whPerKm += 2;
 
-  if (mode === "eco") whPerKm = 11;
-  if (mode === "confort") whPerKm = 16;
-  if (mode === "sport") whPerKm = 22;
+  const autonomie = (voltage * ah) / whPerKm;
 
-  if (weight >= 95) whPerKm += 2;
-  else if (weight <= 65) whPerKm -= 1;
+  const allerOK = autonomie >= distance;
+  const arOK = autonomie >= distance * 2;
 
-  if (speed >= 50) whPerKm += 3;
-  else if (speed > 40) whPerKm += 2;
-  else if (speed < 20) whPerKm -= 1;
-
-  const autonomie = usableWh / whPerKm;
-  const aller = distance;
-  const allerRetour = distance * 2;
-
-  const resteAller = autonomie - aller;
-  const resteAR = autonomie - allerRetour;
-
-  let batterieAller = (resteAller / autonomie) * batteryPercent;
-  let batterieAR = (resteAR / autonomie) * batteryPercent;
-
-  batterieAller = Math.max(0, batterieAller);
-  batterieAR = Math.max(0, batterieAR);
-
-  const allerOK = autonomie >= aller;
-  const arOK = autonomie >= allerRetour;
-
-  let conseil = "";
-  let classe = "good";
-
-  if (!allerOK) {
-    conseil = "Autonomie insuffisante même pour l'aller.";
-    classe = "bad";
-  } else if (!arOK) {
-    conseil = "Aller possible mais pas le retour complet.";
-    classe = "warn";
-  } else if (speed > 40) {
-    conseil = "Tu peux gagner en autonomie en roulant moins vite.";
-    classe = "warn";
-  } else {
-    conseil = "Autonomie confortable.";
-  }
-
-  result.innerHTML = `
-    Autonomie : ${autonomie.toFixed(1)} km<br>
-    Aller : <span class="${allerOK ? 'good' : 'bad'}">${allerOK ? 'OK' : 'NON'}</span><br>
-    Aller-retour : <span class="${arOK ? 'good' : 'bad'}">${arOK ? 'OK' : 'NON'}</span><br>
-    Batterie après aller : ${batterieAller.toFixed(0)} %<br>
-    Batterie après A/R : ${batterieAR.toFixed(0)} %<br><br>
-    <span class="${classe}">${conseil}</span>
-  `;
+  document.getElementById("result").innerHTML =
+    "Autonomie : " + autonomie.toFixed(1) + " km<br>" +
+    "Aller : " + (allerOK ? "OK" : "NON") + "<br>" +
+    "A/R : " + (arOK ? "OK" : "NON");
 }
 </script>
 
