@@ -14,201 +14,147 @@ body {
   padding: 20px;
 }
 
-.wrap {
-  max-width: 900px;
+.container {
+  max-width: 500px;
   margin: auto;
+  background: rgba(0,0,0,0.7);
+  padding: 20px;
+  border-radius: 15px;
 }
 
-h1 {
+h2 {
   text-align: center;
-  font-size: 26px;
-  margin-bottom: 5px;
-}
-
-.subtitle {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #e0e0e0;
-  font-size: 14px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.card {
-  background: rgba(0,0,0,0.75);
-  border-radius: 16px;
-  padding: 16px;
-}
-
-h3 {
-  margin-top: 0;
-  font-size: 18px;
 }
 
 label {
+  font-weight: bold;
   display: block;
   margin-top: 10px;
-  font-size: 14px;
-  font-weight: bold;
 }
 
 input, select {
   width: 100%;
   padding: 10px;
-  margin-top: 4px;
+  margin-top: 5px;
   border-radius: 10px;
   border: none;
-  background: #f1f1f1;
-  color: black;
-  font-size: 15px;
-}
-
-input[readonly] {
-  background: #ddd;
 }
 
 button {
   width: 100%;
   margin-top: 15px;
   padding: 12px;
-  border: none;
   border-radius: 10px;
+  border: none;
   background: #00e56f;
   font-weight: bold;
-  cursor: pointer;
-}
-
-.result-card {
-  margin-top: 18px;
-  background: rgba(0,0,0,0.75);
-  border-radius: 16px;
-  padding: 16px;
 }
 
 .result {
+  margin-top: 15px;
+  padding: 15px;
+  background: #111;
+  border-radius: 10px;
   font-size: 16px;
-  font-weight: bold;
   line-height: 1.6;
 }
 
 .good { color: #00ff84; }
-.warn { color: #ffcc66; }
-.bad { color: #ff6b6b; }
-
-.note {
-  margin-top: 10px;
-  font-size: 12px;
-  color: #ccc;
-}
-
-@media (max-width: 700px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-}
+.warn { color: orange; }
+.bad { color: red; }
 </style>
 </head>
 
 <body>
 
-<div class="wrap">
+<div class="container">
 
-<h1>Calculateur autonomie</h1>
-<div class="subtitle">Estimation rapide avant un trajet</div>
+<h2>Calculateur autonomie</h2>
 
-<div class="grid">
+<label>Batterie (%)</label>
+<input type="number" value="100" readonly>
 
-  <div class="card">
-    <h3>🔋 Batterie</h3>
+<label>Poids (kg)</label>
+<input type="number" id="weight" value="80">
 
-    <label>Batterie (%)</label>
-    <input type="number" value="100" readonly>
+<label>Volts (V)</label>
+<input type="number" id="voltage" value="60">
 
-    <label>Poids (kg)</label>
-    <input type="number" id="weight" value="80">
+<label>Ah</label>
+<input type="number" id="ah" value="35">
 
-    <label>Volts (V)</label>
-    <input type="number" id="voltage" value="60">
+<label>Mode</label>
+<select id="mode">
+  <option value="eco">Eco</option>
+  <option value="confort" selected>Confort</option>
+  <option value="sport">Sport</option>
+</select>
 
-    <label>Capacité (Ah)</label>
-    <input type="number" id="ah" value="35">
-  </div>
+<label>Vitesse</label>
+<input type="number" id="speed" value="45">
 
-  <div class="card">
-    <h3>🛣️ Trajet</h3>
+<label>Distance aller</label>
+<input type="number" id="distance" value="10">
 
-    <label>Mode</label>
-    <select id="mode">
-      <option value="eco">Eco</option>
-      <option value="confort" selected>Confort</option>
-      <option value="sport">Sport</option>
-    </select>
+<button onclick="calculate()">Calculer</button>
 
-    <label>Vitesse (km/h)</label>
-    <input type="number" id="speed" value="45">
-
-    <label>Distance aller (km)</label>
-    <input type="number" id="distance" value="10">
-
-    <button onclick="calculate()">Calculer</button>
-  </div>
-
-</div>
-
-<div class="result-card">
-  <div class="result" id="result">
-    Clique sur calculer
-  </div>
-
-  <div class="note">
-    Résultat indicatif. Le vent, les côtes ou le style de conduite peuvent influencer.
-  </div>
-</div>
+<div class="result" id="result">Résultat ici</div>
 
 </div>
 
 <script>
 function calculate() {
-  const weight = +document.getElementById("weight").value;
-  const voltage = +document.getElementById("voltage").value;
-  const ah = +document.getElementById("ah").value;
-  const speed = +document.getElementById("speed").value;
-  const distance = +document.getElementById("distance").value;
-  const mode = document.getElementById("mode").value;
+
+  let weight = +document.getElementById("weight").value;
+  let voltage = +document.getElementById("voltage").value;
+  let ah = +document.getElementById("ah").value;
+  let speed = +document.getElementById("speed").value;
+  let distance = +document.getElementById("distance").value;
+  let mode = document.getElementById("mode").value;
+
+  let wh = voltage * ah;
 
   let whPerKm = (mode === "eco") ? 11 : (mode === "confort") ? 16 : 22;
 
   if (weight > 90) whPerKm += 2;
   if (speed > 40) whPerKm += 2;
 
-  const autonomie = (voltage * ah) / whPerKm;
+  let autonomie = wh / whPerKm;
 
-  const allerOK = autonomie >= distance;
-  const arOK = autonomie >= distance * 2;
+  let consoAller = distance * whPerKm;
+  let consoAR = distance * 2 * whPerKm;
+
+  let batterieAller = 100 - (consoAller / wh * 100);
+  let batterieAR = 100 - (consoAR / wh * 100);
+
+  batterieAller = Math.max(0, batterieAller);
+  batterieAR = Math.max(0, batterieAR);
+
+  let allerOK = autonomie >= distance;
+  let arOK = autonomie >= distance * 2;
 
   let message = "";
   let cls = "good";
 
   if (!allerOK) {
-    message = "Autonomie insuffisante même pour l'aller.";
+    message = "Impossible même pour l'aller";
     cls = "bad";
   } else if (!arOK) {
-    message = "Aller possible mais pas le retour.";
+    message = "Aller possible mais pas le retour";
     cls = "warn";
   } else if (speed > 40) {
-    message = "Trajet OK mais tu peux gagner en autonomie en roulant moins vite.";
+    message = "OK mais tu peux gagner en autonomie en roulant moins vite";
     cls = "warn";
   } else {
-    message = "Autonomie confortable.";
+    message = "Autonomie confortable";
   }
 
   document.getElementById("result").innerHTML =
+    "Autonomie : " + autonomie.toFixed(1) + " km<br><br>" +
     "Aller : " + (allerOK ? "OK" : "NON") + "<br>" +
     "Aller-retour : " + (arOK ? "OK" : "NON") + "<br><br>" +
+    "Batterie après aller : " + batterieAller.toFixed(0) + "%<br>" +
+    "Batterie après A/R : " + batterieAR.toFixed(0) + "%<br><br>" +
     "<span class='" + cls + "'>" + message + "</span>";
 }
 </script>
