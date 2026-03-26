@@ -111,32 +111,23 @@ input, select {
 .battery-warn { color: #ffca4f; font-weight: bold; }
 .battery-bad { color: #ff3b3b; font-weight: bold; }
 
-/* Clignotement rouge */
+/* Clignotement */
 .alert-box {
-  animation: blink-red 1s infinite;
+  animation: pulse 1s infinite;
 }
 
-@keyframes blink-red {
-  0% { opacity: 1; }
-  50% { opacity: 0.25; }
-  100% { opacity: 1; }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
 }
 
 .status-line { font-size: 20px; margin-bottom: 12px; }
+.message { font-size: 18px; margin-top: 10px; }
 
-.message {
-  font-size: 18px;
-  margin-top: 10px;
-  font-weight: bold;
-  color: red;
-}
-
-.note {
-  margin-top: 12px;
-  font-size: 13px;
-  color: #cfe3ff;
-  text-align: center;
-}
+.good { color: #11f28c; }
+.warn { color: #ffca4f; }
+.bad { color: #ff7070; }
 
 </style>
 </head>
@@ -159,29 +150,10 @@ input, select {
 <input type="number" id="weight" value="80">
 
 <label>Volts</label>
-<select id="voltage">
-<option>36</option>
-<option>48</option>
-<option>52</option>
-<option selected>60</option>
-<option>72</option>
-</select>
+<input type="number" id="voltage" value="60">
 
 <label>Ah</label>
-<select id="ah">
-<option>13</option>
-<option>15</option>
-<option>18</option>
-<option>20</option>
-<option>21</option>
-<option>24</option>
-<option>26</option>
-<option>28</option>
-<option>30</option>
-<option selected>35</option>
-<option>40</option>
-</select>
-
+<input type="number" id="ah" value="35">
 </div>
 
 <div class="card">
@@ -214,19 +186,20 @@ input, select {
 <div class="result-card">
 
 <div class="stats">
-<div class="stat"><div class="stat-label">Batterie</div><div id="batteryWh" class="stat-value"></div></div>
-<div class="stat"><div class="stat-label">Conso</div><div id="consumption" class="stat-value"></div></div>
-<div class="stat"><div class="stat-label">Autonomie</div><div id="rangeKm" class="stat-value"></div></div>
+<div class="stat"><div class="stat-label">Batterie</div><div id="batteryWh"></div></div>
+<div class="stat"><div class="stat-label">Conso</div><div id="consumption"></div></div>
+<div class="stat"><div class="stat-label">Autonomie</div><div id="rangeKm"></div></div>
 
-<div class="stat"><div class="stat-label">Après aller</div><div id="batteryAfterGo" class="stat-value"></div></div>
-<div class="stat"><div class="stat-label">Après A/R</div><div id="batteryAfterRoundTrip" class="stat-value"></div></div>
-<div class="stat"><div class="stat-label">Distance A/R</div><div id="roundTripDistance" class="stat-value"></div></div>
+<div class="stat"><div class="stat-label">Après aller</div><div id="batteryAfterGo"></div></div>
+<div class="stat"><div class="stat-label">Après A/R</div><div id="batteryAfterRoundTrip"></div></div>
+<div class="stat"><div class="stat-label">Distance A/R</div><div id="roundTripDistance"></div></div>
 </div>
 
 <div class="status-line" id="statusLine"></div>
 <div class="message" id="message"></div>
 
-<div class="note">
+<!-- 🔥 TA PHRASE AJOUTÉE ICI -->
+<div style="font-size:13px; color:#cfe3ff; text-align:center; margin-top:8px;">
 Résultat approximatif : ne prend pas en compte le vent, les montées, la pression des pneus ou l’état de la route.
 </div>
 
