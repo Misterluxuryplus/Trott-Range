@@ -152,6 +152,8 @@
       font-weight: bold;
       line-height: 1.5;
       margin-bottom: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
     }
 
     .note {
@@ -170,6 +172,45 @@
 
     .bad {
       color: #ff7070;
+    }
+
+    .battery-good {
+      color: #11f28c;
+    }
+
+    .battery-warn {
+      color: #ffca4f;
+    }
+
+    .battery-bad {
+      color: #ff7070;
+    }
+
+    .alert-box {
+      background: rgba(255, 90, 90, 0.18);
+      border: 2px solid #ff7070;
+      animation: pulseAlert 1s infinite;
+    }
+
+    .alert-box-orange {
+      background: rgba(255, 202, 79, 0.18);
+      border: 2px solid #ffca4f;
+      animation: pulseAlert 1.2s infinite;
+    }
+
+    @keyframes pulseAlert {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(255, 112, 112, 0.0);
+      }
+      50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 18px rgba(255, 112, 112, 0.45);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(255, 112, 112, 0.0);
+      }
     }
 
     @media (max-width: 900px) {
@@ -310,6 +351,12 @@
       return Math.min(Math.max(value, min), max);
     }
 
+    function batteryClass(percent) {
+      if (percent < 30) return "battery-bad";
+      if (percent < 50) return "battery-warn";
+      return "battery-good";
+    }
+
     function calculate() {
       let batteryPercent = parseFloat(document.getElementById("batteryPercent").value);
       const weight = parseFloat(document.getElementById("weight").value);
@@ -332,25 +379,21 @@
       ) {
         document.getElementById("statusLine").innerHTML = "<span class='bad'>Merci de remplir correctement tous les champs.</span>";
         document.getElementById("message").innerHTML = "";
+        document.getElementById("message").className = "message";
         return;
       }
 
       const totalWh = voltage * ah;
-
-      // Marge sécurité légère
       const safetyFactor = 0.95;
       const usableWh = totalWh * (batteryPercent / 100) * safetyFactor;
 
-      // Base affinée pour coller davantage à ton retour réel
       let whPerKm;
       if (mode === "eco") whPerKm = 9.2;
       if (mode === "confort") whPerKm = 10.4;
       if (mode === "sport") whPerKm = 13.8;
 
-      // Poids affiné autour de 80 kg
       whPerKm += (weight - 80) * 0.04;
 
-      // Vitesse plus progressive
       if (speed <= 25) {
         whPerKm -= 0.5;
       } else if (speed <= 30) {
@@ -373,7 +416,6 @@
       const consoAllerWh = distance * whPerKm;
       const consoRoundTripWh = roundTrip * whPerKm;
 
-      // Batterie restante affichée sur la batterie totale
       let batteryAfterGo = batteryPercent - ((consoAllerWh / totalWh) * 100);
       let batteryAfterRoundTrip = batteryPercent - ((consoRoundTripWh / totalWh) * 100);
 
@@ -386,8 +428,10 @@
       document.getElementById("batteryWh").textContent = Math.round(totalWh) + " Wh";
       document.getElementById("consumption").textContent = whPerKm.toFixed(1) + " Wh/km";
       document.getElementById("rangeKm").textContent = autonomie.toFixed(1) + " km";
-      document.getElementById("batteryAfterGo").textContent = batteryAfterGo.toFixed(0) + " %";
-      document.getElementById("batteryAfterRoundTrip").textContent = batteryAfterRoundTrip.toFixed(0) + " %";
+      document.getElementById("batteryAfterGo").innerHTML =
+        "<span class='" + batteryClass(batteryAfterGo) + "'>" + batteryAfterGo.toFixed(0) + " %</span>";
+      document.getElementById("batteryAfterRoundTrip").innerHTML =
+        "<span class='" + batteryClass(batteryAfterRoundTrip) + "'>" + batteryAfterRoundTrip.toFixed(0) + " %</span>";
       document.getElementById("roundTripDistance").textContent = roundTrip.toFixed(1) + " km";
 
       let statusHtml = "";
@@ -397,10 +441,20 @@
 
       let message = "";
       let cls = "good";
+      let extraClass = "";
 
       if (!allerOK) {
         message = "Autonomie insuffisante même pour l’aller. Il faut réduire la vitesse, passer en mode éco ou viser une batterie plus grosse.";
         cls = "bad";
+        extraClass = "alert-box";
+      } else if (batteryAfterRoundTrip < 30) {
+        message = "⚠️ Attention : batterie sous 30% après trajet. Évite de descendre aussi bas pour préserver la batterie.";
+        cls = "bad";
+        extraClass = "alert-box";
+      } else if (batteryAfterRoundTrip < 50) {
+        message = "⚠️ Batterie assez basse après trajet. Ça passe, mais la marge devient limitée.";
+        cls = "warn";
+        extraClass = "alert-box-orange";
       } else if (allerOK && !arOK) {
         message = "L’aller semble faisable, mais pas le retour complet. Il faudra recharger sur place ou rouler plus calmement.";
         cls = "warn";
@@ -412,7 +466,9 @@
         cls = "good";
       }
 
-      document.getElementById("message").innerHTML = "<span class='" + cls + "'>" + message + "</span>";
+      const messageEl = document.getElementById("message");
+      messageEl.className = "message " + extraClass;
+      messageEl.innerHTML = "<span class='" + cls + "'>" + message + "</span>";
     }
   </script>
 </body>
