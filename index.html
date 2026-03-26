@@ -132,10 +132,16 @@ input, select {
 }
 
 .message {
-  font-size: 18px;
-  margin-top: 10px;
+  font-size: 20px;
+  margin-top: 14px;
   color: #ff3b3b;
-  font-weight: bold;
+  font-weight: 900;
+  text-align: center;
+  background: rgba(255, 0, 0, 0.14);
+  border: 2px solid rgba(255, 80, 80, 0.85);
+  border-radius: 16px;
+  padding: 14px;
+  animation: pulse 1s infinite;
 }
 
 .note {
@@ -239,7 +245,7 @@ input, select {
 </div>
 
 <div class="status-line" id="statusLine"></div>
-<div class="message" id="message"></div>
+<div class="message" id="message" style="display:none;"></div>
 
 <div class="note">
 Résultat approximatif : ne prend pas en compte le vent, les montées, la pression des pneus ou l’état de la route.
@@ -316,12 +322,15 @@ function calculate() {
     "Aller : " + (autonomie >= distance ? "OK" : "NON") + "<br>" +
     "Aller-retour : " + (autonomie >= roundTrip ? "OK" : "NON");
 
-  let msg = "";
-  if (afterAR < 30) {
-    msg = "⚠️ Batterie trop basse, évite de descendre sous 30%";
-  }
+  let msgElement = document.getElementById("message");
 
-  document.getElementById("message").innerHTML = msg;
+  if (afterAR < 30) {
+    msgElement.style.display = "block";
+    msgElement.innerHTML = "⚠️ BATTERIE TROP BASSE : LE RETOUR RISQUE D’ÊTRE TRÈS COMPLIQUÉ. TROUVE UNE SOLUTION AVANT DE PARTIR.";
+  } else {
+    msgElement.style.display = "none";
+    msgElement.innerHTML = "";
+  }
 }
 </script>
 
