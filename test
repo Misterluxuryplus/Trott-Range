@@ -1,1 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autonomie Trott</title>
 
+<style>
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+input, select, button {
+  width: 90%;
+  padding: 12px;
+  margin: 10px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+}
+
+button {
+  background: orange;
+  color: white;
+  font-weight: bold;
+}
+
+.result {
+  font-size: 30px;
+  margin-top: 20px;
+}
+
+.orange {
+  color: orange;
+}
+
+.red {
+  color: red;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.3; }
+}
+</style>
+
+</head>
+<body>
+
+<h2>Calculateur Autonomie Trott</h2>
+
+<input type="number" id="battery" placeholder="Batterie départ (%)" value="100">
+
+<input type="number" id="distance" placeholder="Distance (km)" value="20">
+
+<select id="speed">
+  <option value="18">18 km/h</option>
+  <option value="22">22 km/h</option>
+  <option value="25" selected>25 km/h</option>
+  <option value="28">28 km/h</option>
+  <option value="32">32 km/h</option>
+</select>
+
+<br>
+
+<button onclick="calc()">Calculer</button>
+
+<div id="result" class="result">-- %</div>
+<div id="warning"></div>
+
+<p style="font-size:12px;opacity:0.7">
+Estimation indicative, ne reflète pas parfaitement la réalité
+</p>
+
+<script>
+function calc() {
+  let b = parseFloat(document.getElementById("battery").value);
+  let d = parseFloat(document.getElementById("distance").value);
+  let s = parseFloat(document.getElementById("speed").value);
+
+  let conso;
+
+  if (s <= 18) conso = 0.55;
+  else if (s <= 22) conso = 0.7;
+  else if (s <= 25) conso = 0.85;
+  else if (s <= 28) conso = 1;
+  else conso = 1.2;
+
+  let reste = b - (d * conso);
+  if (reste < 0) reste = 0;
+
+  reste = Math.round(reste);
+
+  let result = document.getElementById("result");
+  let warning = document.getElementById("warning");
+
+  result.innerHTML = reste + " %";
+
+  if (reste < 30) {
+    result.className = "result red";
+    warning.innerHTML = "⚠ Batterie basse";
+  } else if (reste < 40) {
+    result.className = "result orange";
+    warning.innerHTML = "";
+  } else {
+    result.className = "result";
+    warning.innerHTML = "";
+  }
+}
+</script>
+
+</body>
+</html>
