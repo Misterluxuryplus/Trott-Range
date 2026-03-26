@@ -103,13 +103,13 @@ input, select {
 
 .stat-value {
   font-size: 20px;
-  font-weight: bold;
+  font-weight: bold; /* 🔥 chiffres en gras */
 }
 
 /* Couleurs batterie */
-.battery-good { color: #11f28c; }
-.battery-warn { color: #ffca4f; }
-.battery-bad { color: #ff3b3b; }
+.battery-good { color: #11f28c; font-weight: bold; }
+.battery-warn { color: #ffca4f; font-weight: bold; }
+.battery-bad { color: #ff3b3b; font-weight: bold; }
 
 /* Clignotement rouge */
 .alert-box {
@@ -123,11 +123,13 @@ input, select {
 }
 
 .status-line { font-size: 20px; margin-bottom: 12px; }
-.message { font-size: 18px; margin-top: 10px; }
 
-.good { color: #11f28c; }
-.warn { color: #ffca4f; }
-.bad { color: #ff7070; }
+.message {
+  font-size: 18px;
+  margin-top: 10px;
+  font-weight: bold;
+  color: red; /* 🔥 message en rouge */
+}
 
 </style>
 </head>
@@ -186,13 +188,13 @@ input, select {
 <div class="result-card">
 
 <div class="stats">
-<div class="stat"><div class="stat-label">Batterie</div><div id="batteryWh"></div></div>
-<div class="stat"><div class="stat-label">Conso</div><div id="consumption"></div></div>
-<div class="stat"><div class="stat-label">Autonomie</div><div id="rangeKm"></div></div>
+<div class="stat"><div class="stat-label">Batterie</div><div id="batteryWh" class="stat-value"></div></div>
+<div class="stat"><div class="stat-label">Conso</div><div id="consumption" class="stat-value"></div></div>
+<div class="stat"><div class="stat-label">Autonomie</div><div id="rangeKm" class="stat-value"></div></div>
 
-<div class="stat"><div class="stat-label">Après aller</div><div id="batteryAfterGo"></div></div>
-<div class="stat"><div class="stat-label">Après A/R</div><div id="batteryAfterRoundTrip"></div></div>
-<div class="stat"><div class="stat-label">Distance A/R</div><div id="roundTripDistance"></div></div>
+<div class="stat"><div class="stat-label">Après aller</div><div id="batteryAfterGo" class="stat-value"></div></div>
+<div class="stat"><div class="stat-label">Après A/R</div><div id="batteryAfterRoundTrip" class="stat-value"></div></div>
+<div class="stat"><div class="stat-label">Distance A/R</div><div id="roundTripDistance" class="stat-value"></div></div>
 </div>
 
 <div class="status-line" id="statusLine"></div>
@@ -226,47 +228,47 @@ let mode = document.getElementById("mode").value;
 let totalWh = voltage * ah;
 let usableWh = totalWh * (batteryPercent/100) * 0.95;
 
-let whPerKm = mode==="eco" ? 9.2 : mode==="confort" ? 10.4 : 13.8;
+let whPerKm = mode==="eco"?9.2:mode==="confort"?10.4:13.8;
 
-whPerKm += (weight - 80) * 0.04;
+whPerKm += (weight-80)*0.04;
 
-if(speed <= 25) whPerKm -= 0.5;
-else if(speed <= 30){}
-else if(speed <= 35) whPerKm += 0.8;
-else if(speed <= 45) whPerKm += 2;
-else if(speed <= 55) whPerKm += 4.2;
-else whPerKm += 6.5;
+if(speed<=25) whPerKm-=0.5;
+else if(speed<=30){}
+else if(speed<=35) whPerKm+=0.8;
+else if(speed<=45) whPerKm+=2;
+else if(speed<=55) whPerKm+=4.2;
+else whPerKm+=6.5;
 
-whPerKm = Math.max(8.5, whPerKm);
+whPerKm=Math.max(8.5,whPerKm);
 
-let autonomie = usableWh / whPerKm;
-let roundTrip = distance * 2;
+let autonomie = usableWh/whPerKm;
+let roundTrip = distance*2;
 
-let afterGo = batteryPercent - (distance * whPerKm / totalWh * 100);
-let afterAR = batteryPercent - (roundTrip * whPerKm / totalWh * 100);
+let afterGo = batteryPercent - (distance*whPerKm/totalWh*100);
+let afterAR = batteryPercent - (roundTrip*whPerKm/totalWh*100);
 
-afterGo = Math.max(0, afterGo);
-afterAR = Math.max(0, afterAR);
+afterGo=Math.max(0,afterGo);
+afterAR=Math.max(0,afterAR);
 
-document.getElementById("batteryWh").innerText = Math.round(totalWh) + " Wh";
-document.getElementById("consumption").innerText = whPerKm.toFixed(1) + " Wh/km";
-document.getElementById("rangeKm").innerText = autonomie.toFixed(1) + " km";
+document.getElementById("batteryWh").innerText = Math.round(totalWh)+" Wh";
+document.getElementById("consumption").innerText = whPerKm.toFixed(1)+" Wh/km";
+document.getElementById("rangeKm").innerText = autonomie.toFixed(1)+" km";
 
 document.getElementById("batteryAfterGo").innerHTML =
-"<span class='" + batteryClass(afterGo) + "'>" + afterGo.toFixed(0) + "%</span>";
+"<span class='"+batteryClass(afterGo)+"'>"+afterGo.toFixed(0)+"%</span>";
 
 let arElement = document.getElementById("batteryAfterRoundTrip");
 arElement.innerHTML =
-"<span class='" + batteryClass(afterAR) + "'>" + afterAR.toFixed(0) + "%</span>";
+"<span class='"+batteryClass(afterAR)+"'>"+afterAR.toFixed(0)+"%</span>";
 
 arElement.classList.remove("alert-box");
 if(afterAR < 30) arElement.classList.add("alert-box");
 
-document.getElementById("roundTripDistance").innerText = roundTrip + " km";
+document.getElementById("roundTripDistance").innerText = roundTrip+" km";
 
 document.getElementById("statusLine").innerHTML =
-"Aller : " + (autonomie >= distance ? "OK" : "NON") + "<br>" +
-"Aller-retour : " + (autonomie >= roundTrip ? "OK" : "NON");
+"Aller : "+(autonomie>=distance?"OK":"NON")+"<br>"+
+"Aller-retour : "+(autonomie>=roundTrip?"OK":"NON");
 
 let msg = "";
 
