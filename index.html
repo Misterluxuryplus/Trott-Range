@@ -6,9 +6,7 @@
   <title>Calculateur Autonomie Trott</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -33,7 +31,6 @@
       text-align: center;
       margin: 0 0 8px;
       font-size: 30px;
-      font-weight: bold;
     }
 
     .subtitle {
@@ -48,7 +45,6 @@
       margin: 16px 0 8px;
       font-size: 17px;
       font-weight: bold;
-      text-align: left;
     }
 
     input, select {
@@ -69,15 +65,12 @@
     }
 
     .quick-buttons button {
-      padding: 12px 8px;
-      border: none;
+      padding: 12px;
       border-radius: 12px;
-      font-size: 15px;
-      font-weight: bold;
+      border: 1px solid #444;
       background: #2c2c2c;
       color: white;
-      border: 1px solid #444;
-      cursor: pointer;
+      font-weight: bold;
     }
 
     .actions {
@@ -89,11 +82,10 @@
 
     .actions button {
       padding: 14px;
-      border: none;
       border-radius: 14px;
       font-size: 17px;
       font-weight: bold;
-      cursor: pointer;
+      border: none;
     }
 
     .btn-calc {
@@ -115,34 +107,27 @@
       text-align: center;
     }
 
-    .result-label {
-      font-size: 15px;
-      color: #cfcfcf;
-      margin-bottom: 8px;
-    }
-
     #result {
       font-size: 40px;
       font-weight: bold;
-      margin: 6px 0 8px;
+      margin: 10px 0;
       color: white;
     }
 
-    .details {
-      font-size: 14px;
-      color: #bdbdbd;
-      line-height: 1.5;
-    }
-
-    .blink-orange {
-      color: orange !important;
+    .blink-red {
+      color: red !important;
       animation: blink 1s infinite;
     }
 
     @keyframes blink {
       0% { opacity: 1; }
-      50% { opacity: 0.35; }
+      50% { opacity: 0.3; }
       100% { opacity: 1; }
+    }
+
+    .details {
+      font-size: 14px;
+      color: #bdbdbd;
     }
 
     .footer-note {
@@ -153,107 +138,103 @@
     }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>Autonomie Trott</h1>
-    <div class="subtitle">Estimation simple de batterie restante</div>
 
-    <label for="batteryStart">Batterie de départ (%)</label>
-    <input type="number" id="batteryStart" min="1" max="100" value="100">
+<div class="container">
 
-    <label for="distance">Distance aller-retour (km)</label>
-    <input type="number" id="distance" min="1" step="0.1" value="20">
+  <h1>Autonomie Trott</h1>
+  <div class="subtitle">Estimation simple de batterie restante</div>
 
-    <label for="speed">Vitesse moyenne</label>
-    <select id="speed">
-      <option value="18">Eco tranquille (18 km/h)</option>
-      <option value="22">Balade (22 km/h)</option>
-      <option value="25" selected>Normal (25 km/h)</option>
-      <option value="28">Soutenu (28 km/h)</option>
-      <option value="32">Rapide (32 km/h)</option>
-      <option value="38">Très rapide (38 km/h)</option>
-    </select>
+  <label>Batterie de départ (%)</label>
+  <input type="number" id="batteryStart" value="100">
 
-    <div class="quick-buttons">
-      <button onclick="setDistance(10)">10 km</button>
-      <button onclick="setDistance(20)">20 km</button>
-      <button onclick="setDistance(30)">30 km</button>
-      <button onclick="setDistance(40)">40 km</button>
-    </div>
+  <label>Distance aller-retour (km)</label>
+  <input type="number" id="distance" value="20">
 
-    <div class="actions">
-      <button class="btn-calc" onclick="calculateBattery()">Calculer</button>
-      <button class="btn-reset" onclick="resetForm()">Réinitialiser</button>
-    </div>
+  <label>Vitesse moyenne</label>
+  <select id="speed">
+    <option value="18">18 km/h</option>
+    <option value="22">22 km/h</option>
+    <option value="25" selected>25 km/h</option>
+    <option value="28">28 km/h</option>
+    <option value="32">32 km/h</option>
+    <option value="38">38 km/h</option>
+  </select>
 
-    <div class="result-box">
-      <div class="result-label">Batterie estimée à l’arrivée</div>
-      <div id="result">-- %</div>
-      <div id="details" class="details">Entre tes valeurs puis appuie sur calculer.</div>
-    </div>
-
-    <div class="footer-note">
-      Estimation indicative, ne reflète pas parfaitement la réalité.
-    </div>
+  <div class="quick-buttons">
+    <button onclick="setDistance(10)">10 km</button>
+    <button onclick="setDistance(20)">20 km</button>
+    <button onclick="setDistance(30)">30 km</button>
+    <button onclick="setDistance(40)">40 km</button>
   </div>
 
-  <script>
-    function setDistance(km) {
-      document.getElementById("distance").value = km;
-      calculateBattery();
-    }
+  <div class="actions">
+    <button class="btn-calc" onclick="calculateBattery()">Calculer</button>
+    <button class="btn-reset" onclick="resetForm()">Reset</button>
+  </div>
 
-    function resetForm() {
-      document.getElementById("batteryStart").value = 100;
-      document.getElementById("distance").value = 20;
-      document.getElementById("speed").value = 25;
-      document.getElementById("result").textContent = "-- %";
-      document.getElementById("result").className = "";
-      document.getElementById("details").textContent = "Entre tes valeurs puis appuie sur calculer.";
-    }
+  <div class="result-box">
+    <div id="result">-- %</div>
+    <div id="details" class="details"></div>
+  </div>
 
-    function calculateBattery() {
-      const batteryStart = parseFloat(document.getElementById("batteryStart").value);
-      const distance = parseFloat(document.getElementById("distance").value);
-      const speed = parseFloat(document.getElementById("speed").value);
+  <div class="footer-note">
+    Estimation indicative, ne reflète pas parfaitement la réalité.
+  </div>
 
-      if (isNaN(batteryStart) || isNaN(distance) || isNaN(speed) || batteryStart <= 0 || distance <= 0) {
-        alert("Merci de remplir correctement les champs.");
-        return;
-      }
+</div>
 
-      let consumptionPerKm;
+<script>
+function setDistance(km) {
+  document.getElementById("distance").value = km;
+  calculateBattery();
+}
 
-      if (speed <= 18) consumptionPerKm = 0.55;
-      else if (speed <= 22) consumptionPerKm = 0.68;
-      else if (speed <= 25) consumptionPerKm = 0.82;
-      else if (speed <= 28) consumptionPerKm = 0.95;
-      else if (speed <= 32) consumptionPerKm = 1.12;
-      else consumptionPerKm = 1.35;
+function resetForm() {
+  document.getElementById("batteryStart").value = 100;
+  document.getElementById("distance").value = 20;
+  document.getElementById("speed").value = 25;
+  document.getElementById("result").innerHTML = "-- %";
+  document.getElementById("result").className = "";
+  document.getElementById("details").innerHTML = "";
+}
 
-      const safetyFactor = 1.05;
-      const used = distance * consumptionPerKm * safetyFactor;
+function calculateBattery() {
+  let battery = parseFloat(document.getElementById("batteryStart").value);
+  let distance = parseFloat(document.getElementById("distance").value);
+  let speed = parseFloat(document.getElementById("speed").value);
 
-      let remaining = batteryStart - used;
+  let conso;
 
-      if (remaining < 0) remaining = 0;
-      if (remaining > 100) remaining = 100;
+  if (speed <= 18) conso = 0.55;
+  else if (speed <= 22) conso = 0.68;
+  else if (speed <= 25) conso = 0.82;
+  else if (speed <= 28) conso = 0.95;
+  else if (speed <= 32) conso = 1.12;
+  else conso = 1.35;
 
-      remaining = Math.round(remaining);
+  let used = distance * conso * 1.05;
+  let remaining = battery - used;
 
-      const result = document.getElementById("result");
-      const details = document.getElementById("details");
+  if (remaining < 0) remaining = 0;
+  if (remaining > 100) remaining = 100;
 
-      result.textContent = remaining + " %";
-      details.textContent = "Départ " + batteryStart + "% • " + distance + " km • " + speed + " km/h";
+  remaining = Math.round(remaining);
 
-      if (remaining < 30) {
-        result.className = "blink-orange";
-      } else {
-        result.className = "";
-        result.style.color = "white";
-      }
-    }
-  </script>
+  let result = document.getElementById("result");
+  let details = document.getElementById("details");
+
+  result.innerHTML = remaining + " %";
+  details.innerHTML = "Départ " + battery + "% • " + distance + " km • " + speed + " km/h";
+
+  if (remaining < 30) {
+    result.className = "blink-red";
+  } else {
+    result.className = "";
+  }
+}
+</script>
+
 </body>
 </html>
