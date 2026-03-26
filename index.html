@@ -306,6 +306,10 @@
       document.getElementById("speed").value = value;
     }
 
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
     function calculate() {
       let batteryPercent = parseFloat(document.getElementById("batteryPercent").value);
       const weight = parseFloat(document.getElementById("weight").value);
@@ -316,7 +320,7 @@
       const mode = document.getElementById("mode").value;
 
       if (isNaN(batteryPercent) || batteryPercent <= 0) batteryPercent = 1;
-      if (batteryPercent > 100) batteryPercent = 100;
+      batteryPercent = clamp(batteryPercent, 1, 100);
       document.getElementById("batteryPercent").value = batteryPercent;
 
       if (
@@ -332,20 +336,36 @@
       }
 
       const totalWh = voltage * ah;
-      const usableWh = totalWh * (batteryPercent / 100);
 
-      let whPerKm = 0;
+      // Petite marge de sécurité réaliste :
+      // on considère qu'on n'utilise pas 100% théorique de l'énergie
+      const safetyFactor = 0.92;
+      const usableWh = totalWh * (batteryPercent / 100) * safetyFactor;
 
-      if (mode === "eco") whPerKm = 11;
-      if (mode === "confort") whPerKm = 16;
+      // Base plus réaliste selon le mode
+      let whPerKm;
+      if (mode === "eco") whPerKm = 13;
+      if (mode === "confort") whPerKm = 17;
       if (mode === "sport") whPerKm = 22;
 
-      if (weight >= 95) whPerKm += 2;
-      else if (weight <= 65) whPerKm -= 1;
+      // Ajustement progressif du poids autour de 80 kg
+      whPerKm += (weight - 80) * 0.08;
 
-      if (speed >= 50) whPerKm += 3;
-      else if (speed > 40) whPerKm += 2;
-      else if (speed < 20) whPerKm -= 1;
+      // Ajustement progressif de la vitesse
+      if (speed <= 25) {
+        whPerKm -= 1.5;
+      } else if (speed <= 35) {
+        whPerKm += 0;
+      } else if (speed <= 45) {
+        whPerKm += 2;
+      } else if (speed <= 55) {
+        whPerKm += 5;
+      } else {
+        whPerKm += 8;
+      }
+
+      // On évite d'aller trop bas
+      whPerKm = Math.max(10, whPerKm);
 
       const autonomie = usableWh / whPerKm;
       const roundTrip = distance * 2;
@@ -353,8 +373,8 @@
       const consoAllerWh = distance * whPerKm;
       const consoRoundTripWh = roundTrip * whPerKm;
 
-      let batteryAfterGo = batteryPercent - ((consoAllerWh / totalWh) * 100);
-      let batteryAfterRoundTrip = batteryPercent - ((consoRoundTripWh / totalWh) * 100);
+      let batteryAfterGo = batteryPercent - ((consoAllerWh / (totalWh * safetyFactor)) * 100);
+      let batteryAfterRoundTrip = batteryPercent - ((consoRoundTripWh / (totalWh * safetyFactor)) * 100);
 
       batteryAfterGo = Math.max(0, batteryAfterGo);
       batteryAfterRoundTrip = Math.max(0, batteryAfterRoundTrip);
@@ -383,8 +403,8 @@
       } else if (allerOK && !arOK) {
         message = "L’aller semble faisable, mais pas le retour complet. Il faudra recharger sur place ou rouler plus calmement.";
         cls = "warn";
-      } else if (speed > 40) {
-        message = "Trajet faisable, mais tu peux gagner une vraie marge de sécurité en roulant moins vite.";
+      } else if (speed > 45) {
+        message = "Trajet faisable, mais à cette vitesse la consommation grimpe vite. En roulant moins vite, tu gagneras une vraie marge.";
         cls = "warn";
       } else {
         message = "Trajet confortable avec une marge correcte.";
