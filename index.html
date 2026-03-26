@@ -337,35 +337,35 @@
 
       const totalWh = voltage * ah;
 
-      // Petite marge de sécurité réaliste :
-      // on considère qu'on n'utilise pas 100% théorique de l'énergie
-      const safetyFactor = 0.92;
+      // Marge sécurité légère
+      const safetyFactor = 0.95;
       const usableWh = totalWh * (batteryPercent / 100) * safetyFactor;
 
-      // Base plus réaliste selon le mode
+      // Base affinée pour coller davantage à ton retour réel
       let whPerKm;
-      if (mode === "eco") whPerKm = 13;
-      if (mode === "confort") whPerKm = 17;
-      if (mode === "sport") whPerKm = 22;
+      if (mode === "eco") whPerKm = 9.2;
+      if (mode === "confort") whPerKm = 10.4;
+      if (mode === "sport") whPerKm = 13.8;
 
-      // Ajustement progressif du poids autour de 80 kg
-      whPerKm += (weight - 80) * 0.08;
+      // Poids affiné autour de 80 kg
+      whPerKm += (weight - 80) * 0.04;
 
-      // Ajustement progressif de la vitesse
+      // Vitesse plus progressive
       if (speed <= 25) {
-        whPerKm -= 1.5;
-      } else if (speed <= 35) {
+        whPerKm -= 0.5;
+      } else if (speed <= 30) {
         whPerKm += 0;
+      } else if (speed <= 35) {
+        whPerKm += 0.8;
       } else if (speed <= 45) {
-        whPerKm += 2;
+        whPerKm += 2.0;
       } else if (speed <= 55) {
-        whPerKm += 5;
+        whPerKm += 4.2;
       } else {
-        whPerKm += 8;
+        whPerKm += 6.5;
       }
 
-      // On évite d'aller trop bas
-      whPerKm = Math.max(10, whPerKm);
+      whPerKm = Math.max(8.5, whPerKm);
 
       const autonomie = usableWh / whPerKm;
       const roundTrip = distance * 2;
@@ -373,8 +373,9 @@
       const consoAllerWh = distance * whPerKm;
       const consoRoundTripWh = roundTrip * whPerKm;
 
-      let batteryAfterGo = batteryPercent - ((consoAllerWh / (totalWh * safetyFactor)) * 100);
-      let batteryAfterRoundTrip = batteryPercent - ((consoRoundTripWh / (totalWh * safetyFactor)) * 100);
+      // Batterie restante affichée sur la batterie totale
+      let batteryAfterGo = batteryPercent - ((consoAllerWh / totalWh) * 100);
+      let batteryAfterRoundTrip = batteryPercent - ((consoRoundTripWh / totalWh) * 100);
 
       batteryAfterGo = Math.max(0, batteryAfterGo);
       batteryAfterRoundTrip = Math.max(0, batteryAfterRoundTrip);
